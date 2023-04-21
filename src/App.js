@@ -1,0 +1,122 @@
+import './App.css'
+import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
+
+//component imports
+// import Sidebar from './components/Sidebar';
+import Dashboard from './pages/Dashboard';
+import Patients from './pages/Patients';
+import Messages from './pages/Messages';
+import Profile from './pages/Profile';
+import PatientDetails from './pages/PatientDetails';
+import LoginComponent from './pages/Login';
+import swal from 'sweetalert';
+import Registration from './pages/Registration';
+import { useEffect, useState } from 'react';
+import AdminComponent from './pages/admin/AdminDashboard';
+import VerifyDoctors from './pages/admin/VerifyDoctors';
+
+function App() {
+
+  const loggedInUser = JSON.parse(localStorage.getItem('user'));
+  const token = localStorage.getItem('jwt-token');
+  const role = localStorage.getItem('role');
+
+  const ProtectedRoute = ({children}) => {
+    if(localStorage.getItem('role')===null){
+      swal('Please Login','you cannot access the page without login!', 'error');
+      return <Navigate to="/login" />
+    }
+    else{
+      return children;
+    }
+  }
+
+  // useEffect(() => {
+  //   const date = new Date();
+  //   console.log("from app component",date);
+  // })
+
+
+  return (
+      <Router>
+        <Routes>
+
+          {/* open routes */}
+
+          <Route exact path="/login" element={<LoginComponent />} />
+
+          <Route path="/register" element={<Registration />} />
+
+            {/* Admin routes */}
+            {
+              (role==='ROLE_ADMIN') && (
+                <>
+                    <Route path="/admin" element={
+                      <ProtectedRoute>
+                        {/* <AdminComponent /> */}
+                        <VerifyDoctors />
+                      </ProtectedRoute>
+                      } />
+                  
+                    <Route path="/verify" element={
+                    <ProtectedRoute>
+                      {/* <VerifyDoctors /> */}
+                      <AdminComponent />
+                    </ProtectedRoute>
+                    } />
+                </>
+              )
+            }
+
+          {/* Doctor Routes */}
+
+          <Route path="/" element={
+              <ProtectedRoute>
+                <Dashboard toke={token} user={loggedInUser}/>
+              </ProtectedRoute>
+            }>
+            DashBoard
+          </Route>
+
+          <Route path="/patients" element={
+              <ProtectedRoute>
+                <Patients toke={token} user={loggedInUser}/>
+              </ProtectedRoute>
+            }>
+              Patients
+          </Route>
+
+          <Route path='/patients/:patientId' element={
+              <ProtectedRoute>
+                <PatientDetails/>
+              </ProtectedRoute>
+            }>
+          </Route>
+
+          <Route path="/chats" element={
+              <ProtectedRoute>
+                <Messages />
+              </ProtectedRoute>
+            }>
+            Messages
+          </Route>
+
+          <Route path="/profile" element={
+              <ProtectedRoute>
+                <Profile token={token} user={loggedInUser}/>
+              </ProtectedRoute>
+            }>
+          </Route>
+
+          <Route path='*' element={
+              <ProtectedRoute>
+                <Dashboard toke={token} user={loggedInUser}/>
+              </ProtectedRoute>
+            } />
+          </Routes>
+          
+      </Router>
+  );
+}
+
+export default App;
