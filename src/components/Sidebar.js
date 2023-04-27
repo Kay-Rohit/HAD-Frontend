@@ -71,9 +71,6 @@ const Sidebar = (props) => {
               <Link to={`/login`}>
                 <button className='btn btn-secondary'
                   onClick={()=>{
-                    // localStorage.removeItem('jwt-token');
-                    // localStorage.removeItem('user');
-                    // localStorage.removeItem('role');
                     setLoggedinUser({...loggedinUser, role:null, token:null, user:{}});
                   }}
                 >Logout <icon><AiOutlineLogout/></icon></button>

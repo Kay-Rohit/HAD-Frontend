@@ -8,7 +8,6 @@ function Search() {
   const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext)
   const [username, setUsername] = useState("");
   const [user, setUser] = useState(null);
-  // const currentUser = JSON.parse(localStorage.getItem('user'));
   const currentUser = loggedinUser.user;
   const {data} = useContext(ChatContext)
 

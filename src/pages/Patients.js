@@ -23,8 +23,6 @@ const Patients = () => {
         fetchPatients();
     }, []);
 
-    // const token = localStorage.getItem('jwt-token');
-    // const user = JSON.parse(localStorage.getItem('user'));
     const token = loggedinUser.token;
     const user = loggedinUser.user;
 

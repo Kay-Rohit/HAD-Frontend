@@ -3,7 +3,6 @@ import AdminNavbarComponent from '../../components/AdminNavbarComponent';
 import { LoggedInUserContext } from '../../context/LoggedInUserContext';
 
 function AdminComponent() {
-  // const role = localStorage.getItem('role');
   const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext)
   return (
     <div>

@@ -32,8 +32,6 @@ function AdminNavbarComponent() {
                 <span className="navbar-text">
                     <button className='btn btn-sm btn-primary'
                         onClick={() => {
-                            // localStorage.removeItem('jwt-token');
-                            // localStorage.removeItem('role');
                             setLoggedinUser({...loggedinUser, token:null, role:null, user:{}});
                             navigate("/login")
                         }}

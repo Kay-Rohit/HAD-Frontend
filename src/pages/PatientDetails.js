@@ -30,8 +30,6 @@ const PatientDetails = () => {
     const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext)
     const patients = useSelector((state)=>state.users.value);
     const articles = useSelector((state)=>state.articles.value);
-    // const token = localStorage.getItem('jwt-token');
-    // const user = JSON.parse(localStorage.getItem('user'));
 
     const token = loggedinUser.token;
     const user = loggedinUser.user;
