@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import Sidebar from "../components/Sidebar";
+import { LoggedInUserContext } from '../context/LoggedInUserContext';
 
 const Profile = () => {
-    const token = localStorage.getItem('jwt-token');
-    const user = JSON.parse(localStorage.getItem('user'));
+    const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext);
+    // const token = localStorage.getItem('jwt-token');
+    // const user = JSON.parse(localStorage.getItem('user'));
 
+    const token = loggedinUser.token;
+    const user = loggedinUser.user;
     const doctor_name = `${user.firstName} ${user.middleName} ${user.lastName}`;
 
     let config = {

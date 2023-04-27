@@ -1,8 +1,11 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import {  } from "firebase/firestore"
+import { LoggedInUserContext } from '../../context/LoggedInUserContext';
 
 function OneMessage({message}) {
-  const currentUser = JSON.parse(localStorage.getItem('user'));
+  const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext)
+  // const currentUser = JSON.parse(localStorage.getItem('user'));
+  const currentUser = loggedinUser.user;
 
   const ref = useRef()
 

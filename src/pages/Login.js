@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import axios from 'axios';
 import swal from 'sweetalert'
 import {useNavigate} from 'react-router-dom'
 import jwt_decode from "jwt-decode";
 import { loginURL, loginURL_v2 } from '../assets/URLs';
+import {LoggedInUserContext} from '../context/LoggedInUserContext'
 
 function LoginComponent(){
 
@@ -11,6 +12,7 @@ function LoginComponent(){
 
     const [username, setUsername] = useState('');
     const [pwd, setPwd] = useState('');
+    const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext);
 
     const enabled = username.length>0 && pwd.length>0;
 
@@ -34,13 +36,14 @@ function LoginComponent(){
 
             //authority role check
             var decoded = jwt_decode(token.substring(7));
-            const role = decoded.authorities[3].authority;
+            const roleDoctor = decoded.authorities[3].authority;
+            const roleAdmin = decoded.authorities[7].authority;
 
-            console.log("decoded", role);
+            console.log("decoded", decoded);
 
             //ONLY DOCTORS are allowed to LOGIN
-            if(decoded.authorities[3].authority==='ROLE_DOCTOR'){
-                localStorage.setItem('jwt-token', token);
+            if(roleDoctor==='ROLE_DOCTOR' || roleAdmin==='ROLE_DOCTOR' ){
+                // localStorage.setItem('jwt-token', token);
                 let config = {
                     headers: {
                         Authorization: token,
@@ -54,16 +57,21 @@ function LoginComponent(){
                 }, config);
 
                 // console.log("logged in user data :", response2.data);
-                localStorage.setItem('jwt-token', token);
-                localStorage.setItem('user', JSON.stringify(response2.data));
-                localStorage.setItem('role', role);
+                // localStorage.setItem('jwt-token', token);
+                // localStorage.setItem('user', JSON.stringify(response2.data));
+                // localStorage.setItem('role', role);
+                setLoggedinUser({...loggedinUser, token:token, user:response2.data, role:roleDoctor});
+                console.log("Logged in user details from context api", loggedinUser);
                 navigate("/");
             }
-            else if(decoded.authorities[3].authority==='ROLE_ADMIN'){
+            else if(roleAdmin==='ROLE_ADMIN' || roleDoctor==='ROLE_ADMIN'){
                             //ONLY ADMINS
-                localStorage.setItem('jwt-token', token);
-                // localStorage.setItem('user', JSON.stringify(response2.data));
-                localStorage.setItem('role', role)
+                // localStorage.setItem('jwt-token', token);
+                // localStorage.setItem('role', role)
+
+                //not setting admin user-details on admin login
+                setLoggedinUser({...loggedinUser, token:token, role:roleAdmin});
+                console.log("Logged in user details from context api", loggedinUser);
                 navigate("/admin");
             }
             else{

@@ -4,12 +4,15 @@ import React, { useContext, useState } from 'react'
 import { ChatContext } from '../../context/ChatContext'
 import {v4 as uuid} from 'uuid'
 import {db} from '../../config/FirebaseConfig'
+import { LoggedInUserContext } from '../../context/LoggedInUserContext';
 
 function InputField() {
 
   const [text, setText] = useState("");
+  const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext)
 
-  const currentUser = JSON.parse(localStorage.getItem('user'));
+  // const currentUser = JSON.parse(localStorage.getItem('user'));
+  const currentUser = loggedinUser.user;
   const {data} = useContext(ChatContext);
 
   const handleSend = async() => {

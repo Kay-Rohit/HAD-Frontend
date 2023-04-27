@@ -1,12 +1,16 @@
 import {
     createContext,
+    useContext,
     useReducer,
   } from "react";
+import { LoggedInUserContext } from "./LoggedInUserContext";
   
   export const ChatContext = createContext();
   
   export const ChatContextProvider = ({ children }) => {
-    const currentUser = JSON.parse(localStorage.getItem('user'));
+    // const currentUser = JSON.parse(localStorage.getItem('user'));
+    const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext);
+    const currentUser = loggedinUser.user;
     const INITIAL_STATE = {
       chatId: "null",
       user: {},

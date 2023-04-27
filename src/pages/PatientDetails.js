@@ -12,22 +12,27 @@ import {useNavigate} from 'react-router-dom'
 
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 // import AddPersonalizedContentForm from '../components/AlreadyAddedPersonalisedContentForm';
 import AlreadyAddedPersonalizedContentForm from '../components/AlreadyAddedPersonalisedContentForm';
 import AddContentForm from '../components/AddContentForm';
 import { addPersonalisedContentURL, deleteAssignedArticleURL, fetchAlreadyAddedArticlesURl } from '../assets/URLs';
 import { updateArticleState } from '../reducers/articleReducer';
+import { LoggedInUserContext } from '../context/LoggedInUserContext';
 
 const PatientDetails = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
+    const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext)
     const patients = useSelector((state)=>state.users.value);
     const articles = useSelector((state)=>state.articles.value);
-    const token = localStorage.getItem('jwt-token');
-    const user = JSON.parse(localStorage.getItem('user'));
+    // const token = localStorage.getItem('jwt-token');
+    // const user = JSON.parse(localStorage.getItem('user'));
+
+    const token = loggedinUser.token;
+    const user = loggedinUser.user;
 
     const [assignedArticles, setAssignedArticle] = useState([]);
 

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Avatar from 'react-avatar';
 import Accordion from 'react-bootstrap/Accordion'
 import { baseURL, unverifiedDoctorsURL, verifyDoctorURL } from '../../assets/URLs';
@@ -12,14 +12,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { deleteDoctor, updateDoctorState } from '../../reducers/doctors/doctorReducer';
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../../config/FirebaseConfig';
+import { LoggedInUserContext } from '../../context/LoggedInUserContext';
 
 function VerifyDoctors() {
 
     const [doctor, setDoctor] = useState({});
-    const token = localStorage.getItem('jwt-token');
-
+    // const token = localStorage.getItem('jwt-token');
+    const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext);
     const unverifiedDoctors = useSelector((state)=>state.doctors.value);
     const dispatch = useDispatch();
+    const token = loggedinUser.token;
 
     const config = {
         headers:{
