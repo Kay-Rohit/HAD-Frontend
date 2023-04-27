@@ -1,10 +1,12 @@
+import { useContext } from "react";
 import Chat from "../components/chat/Chat";
 import Side from "../components/chat/Side";
 import Sidebar from "../components/Sidebar";
+import { LoggedInUserContext } from "../context/LoggedInUserContext";
 
 const Messages = () => {
     const user = JSON.parse(localStorage.getItem('user'));
-    const doctor_name = `Dr. ${user.firstName} ${user.middleName} ${user.lastName}`;
+    const doctor_name = `${user.firstName} ${user.middleName} ${user.lastName}`;
     return (
         <>
             <Sidebar name={doctor_name}>

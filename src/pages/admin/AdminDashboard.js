@@ -1,12 +1,14 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import AdminNavbarComponent from '../../components/AdminNavbarComponent';
+import { LoggedInUserContext } from '../../context/LoggedInUserContext';
 
 function AdminComponent() {
-  const role = localStorage.getItem('role');
+  // const role = localStorage.getItem('role');
+  const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext)
   return (
     <div>
       {
-        (role === 'ROLE_ADMIN') ? (
+        (loggedinUser.role === 'ROLE_ADMIN') ? (
           <AdminNavbarComponent />
         ) : (
           <div>

@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import {useNavigate} from 'react-router-dom'
+import { LoggedInUserContext } from '../context/LoggedInUserContext';
 
 function AdminNavbarComponent() {
     const navigate = useNavigate();
+    const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext)
   return (
     <div className=''>
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -30,8 +32,9 @@ function AdminNavbarComponent() {
                 <span className="navbar-text">
                     <button className='btn btn-sm btn-primary'
                         onClick={() => {
-                            localStorage.removeItem('jwt-token');
-                            localStorage.removeItem('role');
+                            // localStorage.removeItem('jwt-token');
+                            // localStorage.removeItem('role');
+                            setLoggedinUser({...loggedinUser, token:null, role:null, user:{}});
                             navigate("/login")
                         }}
                     >Logout</button>

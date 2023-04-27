@@ -1,6 +1,6 @@
 // import avatar from "../assets/avatar.png"
 import axios from 'axios'
-import {useEffect, useState} from 'react'
+import {useContext, useEffect, useState} from 'react'
 import {allPatientsURL} from '../assets/URLs'
 
 import {useDispatch, useSelector} from 'react-redux'
@@ -10,19 +10,23 @@ import {updateUserState} from '../reducers/users/userReducer'
 import Card from 'react-bootstrap/Card';
 import avatar from "../assets/avatar.png"
 import {Link} from 'react-router-dom'
+import { LoggedInUserContext } from '../context/LoggedInUserContext';
 
 const Patients = () => {
     const dispatch = useDispatch();
     const [name, setName] = useState('');
     const patients = useSelector((state)=>state.users.value)
-    const [query, setQuery] = useState("")
+    const [query, setQuery] = useState("");
+    const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext);
 
     useEffect(() => {
         fetchPatients();
     }, []);
 
-    const token = localStorage.getItem('jwt-token');
-    const user = JSON.parse(localStorage.getItem('user'));
+    // const token = localStorage.getItem('jwt-token');
+    // const user = JSON.parse(localStorage.getItem('user'));
+    const token = loggedinUser.token;
+    const user = loggedinUser.user;
 
     const doctor_name = `Dr. ${user.firstName} ${user.middleName} ${user.lastName}`;
 

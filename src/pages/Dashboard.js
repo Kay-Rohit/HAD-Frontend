@@ -5,21 +5,23 @@ import axios from "axios";
 import { barChartData, severityData } from "../fakeData";
 // import ProgressBar from 'react-bootstrap/ProgressBar'
 
-import Requests from "../components/Requests";
-import { requestsURL } from "../assets/URLs";
-import { useState, useEffect } from "react";
-import { Navigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { updateRequestState } from "../reducers/requests/requestReducer";
+import Requests from '../components/Requests';
+import {requestsURL} from '../assets/URLs';
+import { useState, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { updateRequestState } from '../reducers/requests/requestReducer';
 
-const Dashboard = ({ token, user }) => {
-  const dispatch = useDispatch();
 
-  // const [requests, setRequests] = useState([]);
-  // const requests = useSelector((state)=>state.requests.value);
-  token = localStorage.getItem("jwt-token");
-  user = JSON.parse(localStorage.getItem("user"));
-  // console.log("from dashboard: ",user);
+const Dashboard = ({token, user}) => {
+
+    const dispatch = useDispatch();
+
+    // const [requests, setRequests] = useState([]);
+    // const requests = useSelector((state)=>state.requests.value);
+    token = localStorage.getItem('jwt-token');
+    user = JSON.parse(localStorage.getItem('user'));
+    // console.log("from dashboard: ",user);
 
   useEffect(() => {
     fetchRequests();

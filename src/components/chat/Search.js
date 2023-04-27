@@ -2,12 +2,14 @@ import React, { useContext, useState } from 'react'
 import { collection, query, where, getDocs, doc, setDoc, updateDoc, serverTimestamp, getDoc } from "firebase/firestore";
 import {db} from '../../config/FirebaseConfig'
 import { ChatContext } from '../../context/ChatContext';
+import { LoggedInUserContext } from '../../context/LoggedInUserContext';
 
 function Search() {
-  
+  const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext)
   const [username, setUsername] = useState("");
   const [user, setUser] = useState(null);
-  const currentUser = JSON.parse(localStorage.getItem('user'));
+  // const currentUser = JSON.parse(localStorage.getItem('user'));
+  const currentUser = loggedinUser.user;
   const {data} = useContext(ChatContext)
 
   const handleSearch = async() =>{

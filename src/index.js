@@ -1,35 +1,37 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React, { useState } from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
 
-import {Provider} from 'react-redux'
-import {configureStore} from '@reduxjs/toolkit'
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
 
-import userReducer from './reducers/users/userReducer';
-import requestReducer from './reducers/requests/requestReducer';
-import { ChatContextProvider } from './context/ChatContext';
-import doctorReducer from './reducers/doctors/doctorReducer';
-import articleReducer from './reducers/articleReducer';
+import userReducer from "./reducers/users/userReducer";
+import requestReducer from "./reducers/requests/requestReducer";
+import { ChatContextProvider } from "./context/ChatContext";
+import doctorReducer from "./reducers/doctors/doctorReducer";
+import articleReducer from "./reducers/articleReducer";
 
 const store = configureStore({
-  reducer:{
+  reducer: {
     users: userReducer,
     requests: requestReducer,
     doctors: doctorReducer,
-    articles: articleReducer
-  }
-})
+    articles: articleReducer,
+  },
+});
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   // <React.StrictMode>
-    <Provider store={store}>
-      <ChatContextProvider>
+  <Provider store={store}>
+      {/* <ChatContextProvider> */}
         <App />
-      </ChatContextProvider>
-    </Provider>
+      {/* </ChatContextProvider> */}
+  </Provider>
   // </React.StrictMode>
 );
 

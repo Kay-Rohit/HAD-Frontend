@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   CDBSidebar,
   CDBSidebarContent,
@@ -10,6 +10,7 @@ import {
 import { NavLink , Link} from 'react-router-dom';
 import {AiOutlineLogout} from 'react-icons/ai'
 import Header from './Header';
+import { LoggedInUserContext } from '../context/LoggedInUserContext';
 
 
 const routes = [
@@ -36,6 +37,7 @@ const routes = [
 ]
 
 const Sidebar = (props) => {
+  const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext)
   const name=props.name;
   return (
     <div className='main-cnt'>
@@ -69,9 +71,10 @@ const Sidebar = (props) => {
               <Link to={`/login`}>
                 <button className='btn btn-secondary'
                   onClick={()=>{
-                    localStorage.removeItem('jwt-token');
-                    localStorage.removeItem('user');
-                    localStorage.removeItem('role');
+                    // localStorage.removeItem('jwt-token');
+                    // localStorage.removeItem('user');
+                    // localStorage.removeItem('role');
+                    setLoggedinUser({...loggedinUser, role:null, token:null, user:{}});
                   }}
                 >Logout <icon><AiOutlineLogout/></icon></button>
               </Link>
