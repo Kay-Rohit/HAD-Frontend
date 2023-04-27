@@ -4,7 +4,7 @@ import Sidebar from "../components/Sidebar";
 
 const Messages = () => {
     const user = JSON.parse(localStorage.getItem('user'));
-    const doctor_name = `${user.firstName} ${user.middleName} ${user.lastName}`;
+    const doctor_name = `Dr. ${user.firstName} ${user.middleName} ${user.lastName}`;
     return (
         <>
             <Sidebar name={doctor_name}>

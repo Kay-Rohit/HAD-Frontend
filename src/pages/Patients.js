@@ -24,7 +24,7 @@ const Patients = () => {
     const token = localStorage.getItem('jwt-token');
     const user = JSON.parse(localStorage.getItem('user'));
 
-    const doctor_name = `${user.firstName} ${user.middleName} ${user.lastName}`;
+    const doctor_name = `Dr. ${user.firstName} ${user.middleName} ${user.lastName}`;
 
     let config = {
         headers: {

@@ -5,6 +5,8 @@ import Form from 'react-bootstrap/Form'
 import avatar from "../assets/avatar.png"
 import Sidebar from '../components/Sidebar';
 import axios from 'axios';
+import ProgressChart from '../components/ProgressChart';
+import { progressData } from '../fakeData';
 
 // import {assignedArticles} from '../fakeData'
 import {useNavigate} from 'react-router-dom'
@@ -114,6 +116,17 @@ const PatientDetails = () => {
           const response = await fetch(request);
           console.log(response);
     }
+
+    const [prgrsData, setPrgrsData] = useState({
+        labels: progressData.map((data) => data.week),
+        datasets: [
+          {
+            label: "Progress",
+            data: progressData.map((data) => data.score),
+            
+          },
+        ],
+      });
         
     return (
         <>
@@ -194,10 +207,11 @@ const PatientDetails = () => {
                         }
                     </div>
                     <div className='progress-details col-md-9 col-12'>
-                        <div className='row h-50 border-light p-2 rounded' style={{backgroundColor:"#f7f7f7"}}>
+                        <div className='row border-light p-2 rounded' style={{backgroundColor:"#f7f7f7"}}>
                             <i style={{fontSize:'large', fontWeight:'bold'}}> Progress</i>
+                            <div className="justify-content-center"><ProgressChart data={prgrsData} /></div>
                         </div>
-                        <div className='row border-light p-2 rounded overflow-auto' style={{backgroundColor:"#f7f7f7"}}>
+                        <div className='row border-light p-2 rounded overflow-auto mt-5' style={{backgroundColor:"#f7f7f7"}}>
                             <div className='d-flex justify-content-between'>
                                 <i style={{fontSize:'large', fontWeight:'bold'}}>Assigned Personalised Articles</i>
                                 <button

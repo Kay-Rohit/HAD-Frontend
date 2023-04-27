@@ -19,7 +19,7 @@ const Header = ({name}) => {
                         src="https://bootdey.com/img/Content/avatar/avatar7.png"
                         width="40"
                         height="40"
-                        className="d-inline-block align-top"
+                        className="d-inline-block align-top mx-2"
                         />
                     </Link>
                 </div>
