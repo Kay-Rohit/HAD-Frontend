@@ -13,7 +13,7 @@ function Chats() {
         const currentUser = loggedinUser.user;
         const unsub = onSnapshot(doc(db, "userChats", `${currentUser.id}`), (doc) => {
             setChats(doc.data());
-            console.log(doc.data())
+            // console.log(doc.data())
         });
 
         return ()=>{
@@ -23,7 +23,7 @@ function Chats() {
     }, []);
 
     const handleSelect = (u) => {
-        console.log(u)
+        // console.log(u)
         dispatch({type:"CHANGE_USER", payload: u});
     };
 
@@ -34,7 +34,7 @@ function Chats() {
         {
             (chats.length !== 0) ?
             Object?.entries(chats)?.map((chat)=>{
-                console.log("from chats", chat[1].userInfo?.name)
+                // console.log("from chats", chat[1].userInfo?.name)
                 return(
                     <div className='user-chat p-2 mx-2 border' key={chat[0]} style={{borderColor:"#6c757d"}}>
                         <img src="" alt=""/>

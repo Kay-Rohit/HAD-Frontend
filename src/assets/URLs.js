@@ -23,8 +23,7 @@ export const fetchAlreadyAddedArticlesURl = `${baseURL}/get/self-article/`
 
 export const deleteAssignedArticleURL = `${baseURL}/doctor/delete/self-article/`
 
-export const severityURL = `${baseURL}/analytics/severity-list/`
 
 // export const avgUsageURL = 
 
-export const UsageURL = `${baseURL}/analytics/plot-line-chart/{{patientId}}/week/{{weekNumber}}`
+export const severityDataURL = `${baseURL}/analytics/severity-list/`
