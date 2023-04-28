@@ -4,7 +4,6 @@ import { LoggedInUserContext } from '../../context/LoggedInUserContext';
 
 function OneMessage({message}) {
   const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext)
-  // const currentUser = JSON.parse(localStorage.getItem('user'));
   const currentUser = loggedinUser.user;
 
   const ref = useRef()

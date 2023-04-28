@@ -17,7 +17,6 @@ import { LoggedInUserContext } from '../../context/LoggedInUserContext';
 function VerifyDoctors() {
 
     const [doctor, setDoctor] = useState({});
-    // const token = localStorage.getItem('jwt-token');
     const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext);
     const unverifiedDoctors = useSelector((state)=>state.doctors.value);
     const dispatch = useDispatch();
