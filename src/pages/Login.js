@@ -3,18 +3,39 @@ import axios from "axios";
 import swal from "sweetalert";
 import { useNavigate } from "react-router-dom";
 import jwt_decode from "jwt-decode";
-import { loginURL, loginURL_v2 } from "../assets/URLs";
+import { baseURL, loginURL, loginURL_v2 } from "../assets/URLs";
 import { LoggedInUserContext } from "../context/LoggedInUserContext";
-import loginImage from '../assets/loginpage.png'
+import loginImage from "../assets/loginpage.png";
+import { Modal, Button } from "react-bootstrap";
 
 function LoginComponent() {
   const navigate = useNavigate();
 
   const [username, setUsername] = useState("");
   const [pwd, setPwd] = useState("");
+  const [email, setEmail] = useState("");
   const { loggedinUser, setLoggedinUser } = useContext(LoggedInUserContext);
 
   var enabled = username.length > 0 && pwd.length > 0;
+
+  //for modal ============================
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  // ======================================
+
+  const sendPasswordResetMail = async (e) => {
+    // console.log(email)
+    e.preventDefault();
+    await axios
+      .get(`${baseURL}/forgot-password/${email}`)
+      .then((res) => {
+        console.log(res);
+        setEmail("")
+        alert("Check your email!");
+      })
+      .catch((err) => console.log(err));
+  };
 
   //code to skip ngrok browser error part
 
@@ -101,6 +122,37 @@ function LoginComponent() {
 
   return (
     <>
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+        size="lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Forget Password?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <form onSubmit={sendPasswordResetMail}>
+          <label className="form-label mb-3" htmlFor="email">
+            Enter your registered email address
+          </label>
+          <input
+            type="email"
+            id="email"
+            className="form-control"
+            placeholder="email@example.com"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            required
+            />
+            <button className="btn btn-primary mt-3" type="submit">
+              Send Mail
+            </button>
+          </form>
+        </Modal.Body>
+      </Modal>
+
       <section
         className="vh-100 gradient-form"
         style={{ backgroundColor: "#eee" }}
@@ -108,7 +160,8 @@ function LoginComponent() {
         <div className="container py-5 h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">
             <div className="col-xl-10">
-              <div className="card rounded-3 text-black" 
+              <div
+                className="card rounded-3 text-black"
                 // style={{
                 //     backgroundImage:`url("https://img.freepik.com/premium-vector/mental-health-care-concept-with-doctors-give-treatment-patient-symbol-illustration_185038-481.jpg?w=1380")`,
                 //     maxHeight:"100%",
@@ -152,6 +205,12 @@ function LoginComponent() {
                             <label className="form-label" htmlFor="password">
                               Password
                             </label>
+                            <button
+                              className="btn btn-light btn-sm text-secondary text-sm"
+                              onClick={handleShow}
+                            >
+                              Forget Password?
+                            </button>
                           </div>
 
                           <div className="text-center pt-1 mb-5 pb-1">
@@ -182,7 +241,12 @@ function LoginComponent() {
                     </div>
                   </div>
                   <div className="col-12 col-lg-6 d-flex align-items-center">
-                    <img className="px-2" src={loginImage} alt="some image of mental health" style={{maxWidth:"100%", maxHeight:"100%"}}/>
+                    <img
+                      className="px-2"
+                      src={loginImage}
+                      alt="some image of mental health"
+                      style={{ maxWidth: "100%", maxHeight: "100%" }}
+                    />
                   </div>
                 </div>
               </div>
