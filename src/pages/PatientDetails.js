@@ -171,7 +171,8 @@ const PatientDetails = () => {
             <div className='container-fluid'>
                 {/* This is patient details page */}
                 <div className='row mt-2' style={{height:"90vh"}}>
-                    <div className='col-md-3 col-12'>
+                    <div className='col-md-4'>
+                        <div className='row'>
                         {
                             patients.filter(patient => {
                                 if (patient.id == patientId) {
@@ -208,11 +209,6 @@ const PatientDetails = () => {
                                 )
                             })
                         }
-                    </div>
-                    <div className='progress-details col-md-9 col-12'>
-                        <div className='row border-light p-2 rounded' style={{backgroundColor:"#f7f7f7"}}>
-                            <i style={{fontSize:'large', fontWeight:'bold'}}> Progress</i>
-                            <div className="justify-content-center"><ProgressChart data={prgrsData} /></div>
                         </div>
                         <div className='row border-light p-2 rounded overflow-auto mt-5' style={{backgroundColor:"#f7f7f7"}}>
                             <div className='d-flex justify-content-between'>
@@ -247,6 +243,13 @@ const PatientDetails = () => {
                             }
                             {/* </div> */}
                         </div>
+                    </div>
+                    <div className='progress-details col-md-8'>
+                        <div className='row border-light p-2 rounded' style={{backgroundColor:"#f7f7f7"}}>
+                            <i style={{fontSize:'large', fontWeight:'bold'}}> Progress</i>
+                            <div className="justify-content-center"><ProgressChart data={prgrsData} /></div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>

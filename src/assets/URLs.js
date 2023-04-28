@@ -1,4 +1,4 @@
-export const baseURL ="https://979c-2a09-bac5-3b49-137d-00-1f1-222.ngrok-free.app"
+export const baseURL ="https://107a-2a09-bac5-3b48-18be-00-277-47.ngrok-free.app"
 
 export const loginURL = `${baseURL}/login`
 export const loginURL_v2 = `${baseURL}/login-timestamp`
@@ -22,3 +22,9 @@ export const addPersonalisedContentURL = `${baseURL}/doctor/add/self-article`
 export const fetchAlreadyAddedArticlesURl = `${baseURL}/get/self-article/`
 
 export const deleteAssignedArticleURL = `${baseURL}/doctor/delete/self-article/`
+
+export const severityURL = `${baseURL}/analytics/severity-list/`
+
+// export const avgUsageURL = 
+
+export const UsageURL = `${baseURL}/analytics/plot-line-chart/{{patientId}}/week/{{weekNumber}}`
