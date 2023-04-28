@@ -22,3 +22,5 @@ export const addPersonalisedContentURL = `${baseURL}/doctor/add/self-article`
 export const fetchAlreadyAddedArticlesURl = `${baseURL}/get/self-article/`
 
 export const deleteAssignedArticleURL = `${baseURL}/doctor/delete/self-article/`
+
+export const severityDataURL = `${baseURL}/analytics/severity-list/`

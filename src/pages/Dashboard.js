@@ -4,11 +4,10 @@ import SeverityChart from "../components/SeverityChart";
 import axios from "axios";
 import { barChartData, severityData } from "../fakeData";
 // import ProgressBar from 'react-bootstrap/ProgressBar'
-
+import {FiRefreshCw} from 'react-icons/fi'
 import Requests from '../components/Requests';
-import {requestsURL} from '../assets/URLs';
+import {requestsURL, severityDataURL} from '../assets/URLs';
 import { useState, useEffect, useContext } from 'react';
-import { Navigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { updateRequestState } from '../reducers/requests/requestReducer';
 import { LoggedInUserContext } from "../context/LoggedInUserContext";
@@ -18,6 +17,7 @@ const Dashboard = ({token, user}) => {
 
     const dispatch = useDispatch();
     const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext);
+    const [patientSeverityData, setPatientSeverityData] = useState([{}]);
 
     // const [requests, setRequests] = useState([]);
     // const requests = useSelector((state)=>state.requests.value);
@@ -28,7 +28,21 @@ const Dashboard = ({token, user}) => {
 
   useEffect(() => {
     fetchRequests();
+    fetchSeverityData();
   }, []);
+
+  useEffect(() => {
+    //function to use data as required by graph
+    setSvrtyData({
+        labels: patientSeverityData.map((data) => data.severityLevel),
+        datasets: [
+          {
+            label: "Usage time",
+            data: patientSeverityData.map((data) => data.count),
+          },
+        ],
+      })
+  }, [patientSeverityData])
 
   let config = {
     headers: {
@@ -51,6 +65,20 @@ const Dashboard = ({token, user}) => {
       });
   }
 
+  async function fetchSeverityData() {
+    await axios
+    .get(`${severityDataURL}${user.id}`, config)
+    .then((response) => {
+    //   console.log("severity data", response.data);
+      setPatientSeverityData(response.data);
+      //save the requests in redux
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
+
+        //function to use data as required by graph
   const [usageData, setUsageData] = useState({
     labels: barChartData.map((data) => data.usageTime),
     datasets: [
@@ -60,6 +88,8 @@ const Dashboard = ({token, user}) => {
       },
     ],
   });
+
+      //function to use data as required by graph
   const [svrtyData, setSvrtyData] = useState({
     labels: severityData.map((data) => data.severityLevel),
     datasets: [
@@ -140,8 +170,9 @@ const Dashboard = ({token, user}) => {
             style={{ backgroundColor: "#d8d9d8", overflow: "auto" }}
             className="row justify-content-center py-2 mt-5"
           >
-            <div className="col-12">
+            <div className="col-12 d-flex justify-content-between">
               <h5>Requests</h5>
+              <button className="btn btn-sm btn-outline-secondary" onClick={fetchRequests}><FiRefreshCw/> Refresh</button>
             </div>
             <Requests token={token} id={user.id} />
           </div>

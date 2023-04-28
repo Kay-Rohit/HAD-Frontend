@@ -15,7 +15,7 @@ function InputField() {
   const {data} = useContext(ChatContext);
 
   const handleSend = async() => {
-    console.log("Inside handle send")
+    // console.log("Inside handle send")
 
     //updating chats
     await updateDoc(doc(db, "chats", data.chatId), {
