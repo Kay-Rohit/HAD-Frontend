@@ -99,3 +99,70 @@ export const newArticles = [
     "patientId":"someUUId"
   }
 ]
+
+export const barChartData = [
+  {
+    id: 1,
+    usageTime: "<15 mins" ,
+    count: 4
+  },
+  {
+    id: 2,
+    usageTime: "15-30 mins" ,
+    count: 6
+  },{
+    id: 3,
+    usageTime: "30-45 mins" ,
+    count: 5
+  },{
+    id: 4,
+    usageTime: "45-60 mins" ,
+    count: 2
+  },{
+    id: 1,
+    usageTime: ">60 mins" ,
+    count: 2
+  },
+]
+
+export const severityData = [
+  {
+    id: 1,
+    severityLevel: "low" ,
+    count: 4
+  },
+  {
+    id: 2,
+    severityLevel: "moderate" ,
+    count: 6
+  },{
+    id: 3,
+    severityLevel: "high" ,
+    count: 5
+  },{
+    id: 4,
+    severityLevel: "critical" ,
+    count: 2
+  },
+]
+
+export const progressData = [
+  {
+    id: 1,
+    week: "week 1" ,
+    score: 20
+  },
+  {
+    id: 2,
+    week: "week 2" ,
+    score: 67
+  },{
+    id: 3,
+    week: "week 3" ,
+    score: 87
+  },{
+    id: 4,
+    week: "week 4" ,
+    score: 79
+  }
+]

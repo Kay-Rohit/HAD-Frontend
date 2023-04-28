@@ -11,7 +11,6 @@ function InputField() {
   const [text, setText] = useState("");
   const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext)
 
-  // const currentUser = JSON.parse(localStorage.getItem('user'));
   const currentUser = loggedinUser.user;
   const {data} = useContext(ChatContext);
 

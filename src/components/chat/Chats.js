@@ -10,7 +10,6 @@ function Chats() {
     const [chats, setChats] = useState([{}]);
     const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext);
     useEffect(()=>{
-        // const currentUser = JSON.parse(localStorage.getItem('user'));
         const currentUser = loggedinUser.user;
         const unsub = onSnapshot(doc(db, "userChats", `${currentUser.id}`), (doc) => {
             setChats(doc.data());

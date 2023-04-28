@@ -28,9 +28,7 @@ function App() {
     user: {},
     role: null,
   });
-  // const loggedInUser = JSON.parse(localStorage.getItem('user'));
-  // const token = localStorage.getItem('jwt-token');
-  // const role = localStorage.getItem('role');
+
   const loggedInUser = loggedinUser.user;
   const token = loggedinUser.token;
   const role = loggedinUser.role;

@@ -7,6 +7,8 @@ import { deleteRequests } from '../reducers/requests/requestReducer';
 
 import {getDoc, doc , setDoc} from 'firebase/firestore';
 import {db} from '../config/FirebaseConfig';
+import { useContext } from 'react';
+import { LoggedInUserContext } from '../context/LoggedInUserContext';
 
 const Requests = ({token, id}) => {
 
@@ -15,6 +17,7 @@ const Requests = ({token, id}) => {
     console.log(requests);
 
     // console.log(requests)
+    const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext)
 
     let config = {
         headers: {
