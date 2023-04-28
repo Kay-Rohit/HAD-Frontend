@@ -7,7 +7,7 @@ import { LoggedInUserContext } from "../context/LoggedInUserContext";
 const Messages = () => {
     const user = JSON.parse(localStorage.getItem('user'));
     const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext)
-    const doctor_name = `${loggedinUser.firstName} ${loggedinUser.middleName} ${loggedinUser.lastName}`;
+    const doctor_name = `${loggedinUser.user.firstName} ${loggedinUser.user.middleName} ${loggedinUser.user.lastName}`;
     return (
         <>
             <Sidebar name={doctor_name}>

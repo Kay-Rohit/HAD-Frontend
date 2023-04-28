@@ -14,13 +14,13 @@ function LoginComponent(){
     const [pwd, setPwd] = useState('');
     const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext);
 
-    const enabled = username.length>0 && pwd.length>0;
+    var enabled = username.length>0 && pwd.length>0;
 
     //code to skip ngrok browser error part
 
     const handleLogin = async(event) => {
         event.preventDefault();
-
+        enabled = !enabled;
         try{
             const response1 = await axios.post(loginURL, {
                 username: username,
@@ -32,14 +32,14 @@ function LoginComponent(){
             });
 
             const token = response1.headers['authorization'];
-            console.log(token);
+            // console.log(token);
 
             //authority role check
             var decoded = jwt_decode(token.substring(7));
             const roleDoctor = decoded.authorities[3].authority;
             const roleAdmin = decoded.authorities[7].authority;
 
-            console.log("decoded", decoded);
+            // console.log("decoded", decoded);
 
             //ONLY DOCTORS are allowed to LOGIN
             if(roleDoctor==='ROLE_DOCTOR' || roleAdmin==='ROLE_DOCTOR' ){
