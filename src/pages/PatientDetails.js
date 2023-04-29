@@ -24,6 +24,7 @@ import {
   fetchAlreadyAddedArticlesURl,
   patientUsageURL,
   patientProgressDataURL,
+  baseURL,
 } from "../assets/URLs";
 import { updateArticleState } from "../reducers/articleReducer";
 import { LoggedInUserContext } from "../context/LoggedInUserContext";
@@ -32,10 +33,10 @@ const PatientDetails = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-    const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext)
-    const patients = useSelector((state)=>state.users.value);
-    const articles = useSelector((state)=>state.articles.value);
-    const [expoDeviceToken, setExpoDeviceToken] = useState('');
+  const { loggedinUser, setLoggedinUser } = useContext(LoggedInUserContext);
+  const patients = useSelector((state) => state.users.value);
+  const articles = useSelector((state) => state.articles.value);
+  const [expoDeviceToken, setExpoDeviceToken] = useState("");
 
   const token = loggedinUser.token;
   const user = loggedinUser.user;
@@ -60,62 +61,66 @@ const PatientDetails = () => {
   const [month, setMonth] = useState(0);
   const [year, setYear] = useState(0);
 
-    const fetchExpoDeviceToken = async() => {
-        console.log("inside expo token fetch func")
-        await axios.post(`${baseURL}/get-device-token`,
+  const fetchExpoDeviceToken = async () => {
+    console.log("inside expo token fetch func");
+    await axios
+      .post(
+        `${baseURL}/get-device-token`,
         {
-            patientId: patientId
+          patientId: patientId,
         },
         {
-            headers:{
-                "ngrok-skip-browser-warning":"true"
-            }
-        })
-        .then((res) => {
-            console.log(res.data);
-            setExpoDeviceToken(res.data);
-        })
-        .catch(err=>console.log(err))
-    }
-
-    async function sendPushNotification() {
-        console.log("push notifications called!!!!")
-        const message = {
-          to: `${expoDeviceToken}`,
-          sound: "default",
-          title: "Hey user!",
-          body: `Dr. ${doctor_name} added new content for you!`,
-          data: {},
-        };
-    
-        await fetch("https://exp.host/--/api/v2/push/send", {
-          method: "POST",
           headers: {
-            Accept: "application/json",
-            "Accept-encoding": "gzip, deflate",
-            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true",
           },
-          body: JSON.stringify(message),
-        });
-      }
+        }
+      )
+      .then((res) => {
+        console.log(res.data);
+        setExpoDeviceToken(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
 
-    const addPersonalisedContent = async() => {
-        console.log("Articles to be sent to patient",articles);
-            const request = new Request(`${addPersonalisedContentURL}`, {
-                method: 'POST',
-                body: JSON.stringify(articles),
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization':token,
-                  'ngrok-skip-browser-warning':'69420'
-                }
-              });
-              await fetch(request).then((res) => {
-                console.log(res);
+  async function sendPushNotification() {
+    console.log("push notifications called!!!!");
+    const message = {
+      to: `${expoDeviceToken}`,
+      sound: "default",
+      title: "Hey user!",
+      body: `Dr. ${doctor_name} added new content for you!`,
+      data: {},
+    };
 
-                sendPushNotification();
-              })
-              .catch(err=> console.log(err))
+    await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    });
+  }
+
+  const addPersonalisedContent = async () => {
+    console.log("Articles to be sent to patient", articles);
+    const request = new Request(`${addPersonalisedContentURL}`, {
+      method: "POST",
+      body: JSON.stringify(articles),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+        "ngrok-skip-browser-warning": "69420",
+      },
+    });
+    await fetch(request)
+      .then((res) => {
+        console.log(res);
+
+        sendPushNotification();
+      })
+      .catch((err) => console.log(err));
 
     handleClose();
     dispatch(updateArticleState([]));
@@ -128,15 +133,15 @@ const PatientDetails = () => {
     },
   };
 
-    }
+  // }
 
-    const fetchAssignedContent = async() => {
-        let config = {
-            headers:{
-                Authorization:token,
-                "ngrok-skip-browser-warning":"69420"
-            }
-        }
+  const fetchAssignedContent = async () => {
+    let config = {
+      headers: {
+        Authorization: token,
+        "ngrok-skip-browser-warning": "69420",
+      },
+    };
 
     await axios
       .get(`${fetchAlreadyAddedArticlesURl}${patientId}`, config)
@@ -147,11 +152,11 @@ const PatientDetails = () => {
       .catch((err) => console.log(err));
   };
 
-    useEffect(() => {
-        fetchAssignedContent();
-        fetchExpoDeviceToken();
-        fetchUsageData();
-    },[]);
+  useEffect(() => {
+    fetchAssignedContent();
+    fetchExpoDeviceToken();
+    fetchUsageData();
+  }, []);
 
   const deleteAssignedContent = async (articleId) => {
     console.log("articleId", articleId);
