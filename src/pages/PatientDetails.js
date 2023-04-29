@@ -1,261 +1,480 @@
-import {useDispatch, useSelector} from 'react-redux'
-import {useParams} from 'react-router-dom'
-import Card from 'react-bootstrap/Card';
-import Form from 'react-bootstrap/Form'
-import avatar from "../assets/avatar.png"
-import Sidebar from '../components/Sidebar';
-import axios from 'axios';
-import ProgressChart from '../components/ProgressChart';
-import { progressData } from '../fakeData';
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import Card from "react-bootstrap/Card";
+import Form from "react-bootstrap/Form";
+import avatar from "../assets/avatar.png";
+import Sidebar from "../components/Sidebar";
+import axios from "axios";
+import ProgressChart from "../components/ProgressChart";
+import PatientUsageChart from "../components/PatientUsageChart";
+import { progressData, patUsageData } from "../fakeData";
 
 // import {assignedArticles} from '../fakeData'
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 
-
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import { useContext, useEffect, useState } from 'react';
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+import { useContext, useEffect, useState } from "react";
 // import AddPersonalizedContentForm from '../components/AlreadyAddedPersonalisedContentForm';
-import AlreadyAddedPersonalizedContentForm from '../components/AlreadyAddedPersonalisedContentForm';
-import AddContentForm from '../components/AddContentForm';
-import { addPersonalisedContentURL, deleteAssignedArticleURL, fetchAlreadyAddedArticlesURl } from '../assets/URLs';
-import { updateArticleState } from '../reducers/articleReducer';
-import { LoggedInUserContext } from '../context/LoggedInUserContext';
+import AlreadyAddedPersonalizedContentForm from "../components/AlreadyAddedPersonalisedContentForm";
+import AddContentForm from "../components/AddContentForm";
+import {
+  addPersonalisedContentURL,
+  deleteAssignedArticleURL,
+  fetchAlreadyAddedArticlesURl,
+  patientUsageURL,
+  patientProgressDataURL,
+} from "../assets/URLs";
+import { updateArticleState } from "../reducers/articleReducer";
+import { LoggedInUserContext } from "../context/LoggedInUserContext";
 
 const PatientDetails = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
+  const { loggedinUser, setLoggedinUser } = useContext(LoggedInUserContext);
+  const patients = useSelector((state) => state.users.value);
+  const articles = useSelector((state) => state.articles.value);
 
-    const {loggedinUser, setLoggedinUser} = useContext(LoggedInUserContext)
-    const patients = useSelector((state)=>state.users.value);
-    const articles = useSelector((state)=>state.articles.value);
+  const token = loggedinUser.token;
+  const user = loggedinUser.user;
 
-    const token = loggedinUser.token;
-    const user = loggedinUser.user;
+  const [assignedArticles, setAssignedArticle] = useState([]);
 
-    const [assignedArticles, setAssignedArticle] = useState([]);
+  let { patientId } = useParams();
+  let doctorId = user?.id;
+  //constant for rendering no. of forms on add button
+  // const [noOfForms, setNoOfForms] = useState(1);
 
-    let {patientId} = useParams();
-    let doctorId = user?.id;
-    //constant for rendering no. of forms on add button
-    // const [noOfForms, setNoOfForms] = useState(1);
+  //for modal ============================
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  // ======================================
 
-    //for modal ============================
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-    // ======================================
+  // console.log(patientId);
+  const doctor_name = `${user?.firstName} ${user?.middleName} ${user?.lastName}`;
 
-    // console.log(patientId);
-    const doctor_name = `${user?.firstName} ${user?.middleName} ${user?.lastName}`;
+  const [patientUsageData, setPatientUsageData] = useState([]);
+  // const [patientProgressData, setPatientProgressData] = useState([]);
+  const [month, setMonth] = useState(0);
+  const [year, setYear] = useState(0);
+  // const [week, setWeek] = useState(0);
 
-    const addPersonalisedContent = async() => {
-        console.log("Articles to be sent to patient",articles);
-            const request = new Request(`${addPersonalisedContentURL}`, {
-                method: 'POST',
-                body: JSON.stringify(articles),
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization':token,
-                  'ngrok-skip-browser-warning':'69420'
-                }
-              });
-              const response = await fetch(request);
-              console.log(response);
+  const addPersonalisedContent = async () => {
+    console.log("Articles to be sent to patient", articles);
+    const request = new Request(`${addPersonalisedContentURL}`, {
+      method: "POST",
+      body: JSON.stringify(articles),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+        "ngrok-skip-browser-warning": "69420",
+      },
+    });
+    const response = await fetch(request);
+    console.log(response);
 
+    handleClose();
+    dispatch(updateArticleState([]));
+  };
 
-              handleClose();
-              dispatch(
-                updateArticleState([])
-              );
+  let config = {
+    headers: {
+      Authorization: token,
+      "ngrok-skip-browser-warning": "69420",
+    },
+  };
 
+  const fetchAssignedContent = async () => {
+    // fetch(`${fetchAlreadyAddedArticlesURl}${patientId}`, {
+    //     method: "get",
+    //     headers: new Headers({
+    //         'Authorization': token,
+    //       'ngrok-skip-browser-warning': "69420",
+    //       'Accept':'Content-Type/json'
+    //     }),
+    //   })
+    //     .then((res) => {
+    //         console.log(res.body.getReader());
+    //     })
+    //     .catch((err) => console.log(err));
 
-    }
+    await axios
+      .get(`${fetchAlreadyAddedArticlesURl}${patientId}`, config)
+      .then((res) => {
+        console.log("Assigned Content", res.data);
+        setAssignedArticle(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
 
-    const fetchAssignedContent = async() => {
-        // fetch(`${fetchAlreadyAddedArticlesURl}${patientId}`, {
-        //     method: "get",
-        //     headers: new Headers({
-        //         'Authorization': token,
-        //       'ngrok-skip-browser-warning': "69420",
-        //       'Accept':'Content-Type/json'
-        //     }),
-        //   })
-        //     .then((res) => {
-        //         console.log(res.body.getReader());
-        //     })
-        //     .catch((err) => console.log(err));
-        let config = {
-            headers:{
-                Authorization:token,
-                "ngrok-skip-browser-warning":"69420"
-            }
-        }
+  useEffect(() => {
+    fetchAssignedContent();
+    fetchUsageData();
+    // fetchProgressData();
+  }, []);
 
-        await axios.get(`${fetchAlreadyAddedArticlesURl}${patientId}`, config)
-        .then((res) => {
-            console.log("Assigned Content", res.data);
-            setAssignedArticle(res.data);
-        })
-        .catch(err => console.log(err));
-    }
+  const deleteAssignedContent = async (articleId) => {
+    console.log("articleId", articleId);
+    const request = new Request(`${deleteAssignedArticleURL}${articleId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+        "ngrok-skip-browser-warning": "69420",
+      },
+    });
+    const response = await fetch(request);
+    console.log(response);
+  };
 
-    useEffect(() => {
-        fetchAssignedContent();
-    },[]);
+  // useEffect(() => {
+  //   //function to use data as required by graph
+  //   setPrgrsData({
+  //     labels: patientProgressData.map((data) => data.weekNumber),
+  //     datasets: [
+  //       {
+  //         label: "Progress",
+  //         data: patientProgressData.map((data) => data.score),
+  //       },
+  //     ],
+  //   });
+  // }, [patientProgressData]);
 
+  useEffect(() => {
+    //function to use data as required by graph
+    setUsgData({
+      labels: [
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+        21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+      ],
+      datasets: [
+        {
+          data: patientUsageData,
+        },
+      ],
+    });
+  }, [patientUsageData]);
 
-    const deleteAssignedContent = async(articleId) => {
-        console.log("articleId", articleId);
-        const request = new Request(`${deleteAssignedArticleURL}${articleId}`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization':token,
-              'ngrok-skip-browser-warning':'69420'
-            }
-          });
-          const response = await fetch(request);
-          console.log(response);
-    }
+  // async function fetchProgressData() {
+  //   await axios
+  //     .get(`${patientProgressDataURL}${patientId}/week/${week}`, config)
+  //     .then((response) => {
+  //         console.log("progress data", response.data);
+  //       setPatientProgressData(response.data);
+  //       //save the requests in redux
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }
 
-    const [prgrsData, setPrgrsData] = useState({
-        labels: progressData.map((data) => data.week),
-        datasets: [
-          {
-            label: "Progress",
-            data: progressData.map((data) => data.score),
-            
-          },
-        ],
+  async function fetchUsageData() {
+    console.log("month = ", month, "and year =", year);
+    await axios
+      .get(`${patientUsageURL}${patientId}/${month}/${year}`, config)
+      .then((response) => {
+        console.log("usage data", response.data);
+        setPatientUsageData(response.data);
+        //save the requests in redux
+      })
+      .catch((error) => {
+        console.log(error);
       });
-        
-    return (
-        <>
-        <Modal
-                show={show}
-                onHide={handleClose}
-                backdrop="static"
-                keyboard={false}
-                size="lg"
-        >
-            <Modal.Header closeButton>
-            <Modal.Title>Add Personalised Content for your Patient</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <form className=''>
-                    {/* Rendering prepopulated Data */}
-                {
-                    articles?.map((article, index) => {
-                        return(
-                            <div key={index} className='border-bottom p-2 mb-2'>
-                                <AlreadyAddedPersonalizedContentForm article={article} doctorId={doctorId} />
-                            </div>
-                        )
-                    })
-                }
-                    <AddContentForm doctorId={doctorId}/>
-                </form>
-            </Modal.Body>
-            <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-                Close
-            </Button>
-            <Button variant="primary" onClick={addPersonalisedContent}>
-                Save Changes
-            </Button>
-            </Modal.Footer>
-        </Modal>
-        <Sidebar name={doctor_name}>
-            <div className='container-fluid'>
-                {/* This is patient details page */}
-                <div className='row mt-2' style={{height:"90vh"}}>
-                    <div className='col-md-4'>
-                        <div className='row'>
-                        {
-                            patients.filter(patient => {
-                                if (patient.id == patientId) {
-                                return patient;
-                                }
-                            }).map((patient) => {
-                                return(
-                                    <Card border="light" className="my-2 text-center" key={patient.id}>
-                                            <Card.Header>
-                                                <div className='avatar rounded-circle'>
-                                                    <img alt="image" src={avatar} style={{objectFit:"contain", width:"25%"}}/>
-                                                </div>
-                                                <div className=''>
-                                                    <Card.Title>{patient?.firstName} {patient?.lastName}</Card.Title>
-                                                    <Card.Text>Patient ID: {patient?.id}</Card.Text>
-                                                    <button className='btn btn-secondary'
-                                                        onClick={()=>{navigate("/chats  ")}}
-                                                    >Message Patient</button>
-                                                </div>
-                                                </Card.Header>
-                                                <div className='my-2'>
-                                                <div style={{backgroundColor:"#d8d8d9"}} className="p-2 text-center">
-                                                <i>Patient Details</i>
-                                                <Card.Text>
-                                                    mail: {patient?.email} <br/>
-                                                    gender: {patient?.gender} <br/>
-                                                    address: {patient?.address} <br/>
-                                                    contact: {patient?.contact} <br/>
-                                                    DOB: {patient?.dob.month} {patient?.dob.year}
-                                                </Card.Text>
-                                            </div>
-                                        </div>
-                                    </Card>
-                                )
-                            })
-                        }
-                        </div>
-                        <div className='row border-light p-2 rounded overflow-auto mt-5' style={{backgroundColor:"#f7f7f7"}}>
-                            <div className='d-flex justify-content-between'>
-                                <i style={{fontSize:'large', fontWeight:'bold'}}>Assigned Personalised Articles</i>
-                                <button
-                                className='btn btn-sm btn-secondary'
-                                onClick={handleShow}
-                                >Add content</button>
-                            </div>
-                            {/* <div className='container-fluid'> */}
-                            {
-                                assignedArticles?.map((article, index) => {
-                                    return(
-                                        <div key={index} className='row my-2'>
-                                            <div className='col-3' style={{backgroundColor:"#bfbebe"}}>
-                                                {article?.articleType}
-                                            </div>
-                                            <div className='col-3' style={{backgroundColor:"#bfbebe"}}>
-                                                {article?.articleTitle}
-                                            </div>
-                                            <div className='col-5' style={{backgroundColor:"#bfbebe"}}>
-                                                {article?.articleUrl}
-                                            </div>
-                                            <button className='btn btn-sm btn-danger col-auto'
-                                                onClick={() => {
-                                                    deleteAssignedContent(article.id)
-                                                }}
-                                            >Delete</button>
-                                        </div>
-                                    )
-                                })
-                            }
-                            {/* </div> */}
-                        </div>
-                    </div>
-                    <div className='progress-details col-md-8'>
-                        <div className='row border-light p-2 rounded' style={{backgroundColor:"#f7f7f7"}}>
-                            <i style={{fontSize:'large', fontWeight:'bold'}}> Progress</i>
-                            <div className="justify-content-center"><ProgressChart data={prgrsData} /></div>
-                        </div>
-                        
-                    </div>
+  }
+
+  const [prgrsData, setPrgrsData] = useState({
+    labels: progressData.map((data) => data.weekNumber),
+    datasets: [
+      {
+        label: "Progress",
+        data: progressData.map((data) => data.score),
+      },
+    ],
+  });
+
+  const [usgData, setUsgData] = useState({
+    labels: [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+      22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+    ],
+    datasets: [
+      {
+        data: patUsageData,
+      },
+    ],
+  });
+
+  const monthOptions = [
+    { value: 0, label: "January" },
+    { value: 1, label: "February" },
+    { value: 2, label: "March" },
+    { value: 3, label: "April" },
+    { value: 4, label: "May" },
+    { value: 5, label: "June" },
+    { value: 6, label: "July" },
+    { value: 7, label: "August" },
+    { value: 8, label: "September" },
+    { value: 9, label: "October" },
+    { value: 10, label: "November" },
+    { value: 11, label: "December" },
+  ];
+
+  const yearOptions = [
+    { value: 2020, label: "2020" },
+    { value: 2021, label: "2021" },
+    { value: 2022, label: "2022" },
+    { value: 2023, label: "2023" },
+  ];
+
+  return (
+    <>
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+        size="lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Add Personalised Content for your Patient</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <form className="">
+            {/* Rendering prepopulated Data */}
+            {articles?.map((article, index) => {
+              return (
+                <div key={index} className="border-bottom p-2 mb-2">
+                  <AlreadyAddedPersonalizedContentForm
+                    article={article}
+                    doctorId={doctorId}
+                  />
                 </div>
+              );
+            })}
+            <AddContentForm doctorId={doctorId} />
+          </form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={addPersonalisedContent}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Sidebar name={doctor_name}>
+        <div className="container-fluid">
+          {/* This is patient details page */}
+          <div className="row mt-2" style={{ height: "90vh" }}>
+            <div className="col-md-4">
+              <div className="row">
+                {patients
+                  .filter((patient) => {
+                    if (patient.id == patientId) {
+                      return patient;
+                    }
+                  })
+                  .map((patient) => {
+                    return (
+                      <Card
+                        border="light"
+                        className="my-2 text-center"
+                        key={patient.id}
+                      >
+                        <Card.Header>
+                          <div className="avatar rounded-circle">
+                            <img
+                              alt="image"
+                              src={avatar}
+                              style={{ objectFit: "contain", width: "25%" }}
+                            />
+                          </div>
+                          <div className="">
+                            <Card.Title>
+                              {patient?.firstName} {patient?.lastName}
+                            </Card.Title>
+                            <Card.Text>Patient ID: {patient?.id}</Card.Text>
+                            <button
+                              className="btn btn-secondary"
+                              onClick={() => {
+                                navigate("/chats  ");
+                              }}
+                            >
+                              Message Patient
+                            </button>
+                          </div>
+                        </Card.Header>
+                        <div className="my-2">
+                          <div
+                            style={{ backgroundColor: "#d8d8d9" }}
+                            className="p-2 text-center"
+                          >
+                            <i>Patient Details</i>
+                            <Card.Text>
+                              mail: {patient?.email} <br />
+                              gender: {patient?.gender} <br />
+                              address: {patient?.address} <br />
+                              contact: {patient?.contact} <br />
+                              DOB: {patient?.dob.month} {patient?.dob.year}
+                            </Card.Text>
+                          </div>
+                        </div>
+                      </Card>
+                    );
+                  })}
+              </div>
+              <div
+                className="row border-light p-2 rounded overflow-auto mt-5"
+                style={{ backgroundColor: "#f7f7f7" }}
+              >
+                <div className="d-flex justify-content-between">
+                  <i style={{ fontSize: "large", fontWeight: "bold" }}>
+                    Assigned Personalised Articles
+                  </i>
+                  <button
+                    className="btn btn-sm btn-secondary"
+                    onClick={handleShow}
+                  >
+                    Add content
+                  </button>
+                </div>
+                {/* <div className='container-fluid'> */}
+                {assignedArticles?.map((article, index) => {
+                  return (
+                    <div key={index} className="row my-2">
+                      <div
+                        className="col-3"
+                        style={{ backgroundColor: "#bfbebe" }}
+                      >
+                        {article?.articleType}
+                      </div>
+                      <div
+                        className="col-3"
+                        style={{ backgroundColor: "#bfbebe" }}
+                      >
+                        {article?.articleTitle}
+                      </div>
+                      <div
+                        className="col-3"
+                        style={{ backgroundColor: "#bfbebe" }}
+                      >
+                        <a
+                          href={article?.articleUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          link
+                        </a>
+                      </div>
+                      <button
+                        className="btn btn-sm btn-danger col-auto"
+                        onClick={() => {
+                          deleteAssignedContent(article.id);
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  );
+                })}
+                {/* </div> */}
+              </div>
             </div>
-        </Sidebar>
-        </>
-    );
-}
- 
+            <div className="chart-details col-md-8">
+              <div className="col">
+                <div
+                  className="row border-light p-2 rounded"
+                  style={{ backgroundColor: "#f7f7f7" }}
+                >
+                  <i style={{ fontSize: "large", fontWeight: "bold" }}>
+                    {" "}
+                    Progress
+                  </i>
+                  <div
+                    className="chart-container "
+                    style={{
+                      position: "relative",
+                      height: "40vh",
+                      width: "80vw",
+                    }}
+                  >
+                    <ProgressChart data={prgrsData} />
+                  </div>
+                </div>
+                <div
+                  className="row-4 border-light p-2 rounded"
+                  style={{ backgroundColor: "#f7f7f7" }}
+                >
+                  <i style={{ fontSize: "large", fontWeight: "bold" }}>
+                    {" "}
+                    App Usage
+                  </i>
+                  <div className="row">
+                    <div className="col-5">
+                      <select
+                        className="form-select"
+                        onChange={(e) => {
+                          setMonth(e.target.value);
+                          // fetchUsageData();
+                        }}
+                      >
+                        {monthOptions.map((op) => {
+                          return (
+                            <option key={op.value} value={op.value}>
+                              {op.label}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                    <div className="col-5">
+                      <select
+                        className="form-select"
+                        onChange={(e) => {
+                          setYear(e.target.value);
+                          // fetchUsageData();
+                        }}
+                      >
+                        {yearOptions.map((op) => {
+                          return (
+                            <option key={op.value} value={op.value}>
+                              {op.label}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                    <div className="col-2">
+                      <button
+                        className="btn btn-light"
+                        onClick={fetchUsageData}
+                      >
+                        Refresh
+                      </button>
+                    </div>
+                  </div>
+
+                  <div
+                    className="chart-container"
+                    style={{
+                      position: "relative",
+                      height: "35vh",
+                      width: "50vw",
+                    }}
+                  >
+                    <PatientUsageChart data={usgData} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Sidebar>
+    </>
+  );
+};
+
 export default PatientDetails;

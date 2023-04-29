@@ -149,20 +149,22 @@ export const severityData = [
 export const progressData = [
   {
     id: 1,
-    week: "week 1" ,
+    weekNumber: "week 1" ,
     score: 20
   },
   {
     id: 2,
-    week: "week 2" ,
+    weekNumber: "week 2" ,
     score: 67
   },{
     id: 3,
-    week: "week 3" ,
+    weekNumber: "week 3" ,
     score: 87
   },{
     id: 4,
-    week: "week 4" ,
+    weekNumber: "week 4" ,
     score: 79
   }
 ]
+
+export const patUsageData = [0,0,0,0,0,15,0,0,0,30,0,0,0,10,45,0,0]
