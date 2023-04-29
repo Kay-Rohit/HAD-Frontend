@@ -9,9 +9,9 @@ import { configureStore } from "@reduxjs/toolkit";
 
 import userReducer from "./reducers/users/userReducer";
 import requestReducer from "./reducers/requests/requestReducer";
-import { ChatContextProvider } from "./context/ChatContext";
 import doctorReducer from "./reducers/doctors/doctorReducer";
 import articleReducer from "./reducers/articleReducer";
+import defaultQuestionaire from "./reducers/defaultContentReducer";
 
 const store = configureStore({
   reducer: {
@@ -19,6 +19,7 @@ const store = configureStore({
     requests: requestReducer,
     doctors: doctorReducer,
     articles: articleReducer,
+    questions: defaultQuestionaire
   },
 });
 
@@ -28,14 +29,8 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   // <React.StrictMode>
   <Provider store={store}>
-      {/* <ChatContextProvider> */}
         <App />
-      {/* </ChatContextProvider> */}
   </Provider>
   // </React.StrictMode>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
