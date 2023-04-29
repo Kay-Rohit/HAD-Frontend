@@ -25,10 +25,8 @@ function LoginComponent() {
   // ======================================
 
   const sendPasswordResetMail = async (e) => {
-    // console.log(email)
     e.preventDefault();
-    await axios
-      .get(`${baseURL}/forgot-password/${email}`)
+    await axios.get(`${baseURL}/forgot-password/${email}`)
       .then((res) => {
         console.log(res);
         setEmail("")

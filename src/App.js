@@ -21,6 +21,7 @@ import AdminComponent from "./pages/admin/AdminDashboard";
 import VerifyDoctors from "./pages/admin/VerifyDoctors";
 import { LoggedInUserContext } from "./context/LoggedInUserContext";
 import { ChatContextProvider } from "./context/ChatContext";
+import AddContent from "./pages/admin/AddContent";
 
 function App() {
   const [loggedinUser, setLoggedinUser] = useState({
@@ -71,11 +72,11 @@ function App() {
                 />
 
                 <Route
-                  path="/verify"
+                  path="/addContent"
                   element={
                     <ProtectedRoute>
                       {/* <VerifyDoctors /> */}
-                      <AdminComponent />
+                      <AddContent />
                     </ProtectedRoute>
                   }
                 />

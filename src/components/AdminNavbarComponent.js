@@ -15,18 +15,15 @@ function AdminNavbarComponent() {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarText">
                 <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                    {/* <li className="nav-item">
-                    <a className='nav-link' onClick={() => {
-                        navigate("/admin")
-                    }} >Home</a>
-                    </li> */}
                     <li className="nav-item">
                     <a className='nav-link' onClick={() => {
-                        navigate("/verify");
+                        navigate("/admin");
                     }} >Doctors</a>
                     </li>
                     <li className="nav-item">
-                    <a className="nav-link">Add Content</a>
+                    <a className="nav-link" onClick={() => {
+                        navigate("/addContent");
+                    }} >Add-Content</a>
                     </li>
                 </ul>
                 <span className="navbar-text">
