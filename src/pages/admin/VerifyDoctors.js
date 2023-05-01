@@ -64,7 +64,7 @@ function VerifyDoctors() {
       )
       .then((response) => {
         console.log(response.data);
-        createChatsDB(doctor?.id);
+        createChatsDB(id);
         dispatch(deleteDoctor({ id: doctor?.id }));
       })
       .catch((err) => {
@@ -76,6 +76,11 @@ function VerifyDoctors() {
     //creating userChats to get track of the last set messages in userChats collection for a doctor,
     // only initialize when doctor is verified
     console.log(id);
+    await setDoc(doc(db, `doc-${id}`, "dummy patient"), {
+      email:"dummymail@mail.com",
+      name:"dummyname",
+      uid:"123456788765432345678"
+    });
     await setDoc(doc(db, "userChats", `${id}`), {});
   };
 
