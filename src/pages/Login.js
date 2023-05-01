@@ -26,11 +26,31 @@ function LoginComponent() {
 
   const sendPasswordResetMail = async (e) => {
     e.preventDefault();
-    await axios.get(`${baseURL}/forgot-password/${email}`)
+    // let config = {
+    //   headers: {
+    //     "ngrok-skip-browser-warning": "true",
+    //   },
+    // };
+    // await axios
+    //   .get(`${baseURL}/forgot-password/${email}`, config)
+    //   .then((res) => {
+    //     console.log(res);
+    //     setEmail("");
+    //     alert("Check your email!");
+    //   })
+    //   .catch((err) => console.log(err));
+
+    await fetch(`${baseURL}/forgot-password/${email}`, {
+      method: "GET", // *GET, POST, PUT, DELETE, etc.
+      mode: "no-cors", // no-cors, *cors, same-origin
+      headers: {
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
       .then((res) => {
         console.log(res);
-        setEmail("")
-        alert("Check your email!");
       })
       .catch((err) => console.log(err));
   };
@@ -132,17 +152,17 @@ function LoginComponent() {
         </Modal.Header>
         <Modal.Body>
           <form onSubmit={sendPasswordResetMail}>
-          <label className="form-label mb-3" htmlFor="email">
-            Enter your registered email address
-          </label>
-          <input
-            type="email"
-            id="email"
-            className="form-control"
-            placeholder="email@example.com"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            required
+            <label className="form-label mb-3" htmlFor="email">
+              Enter your registered email address
+            </label>
+            <input
+              type="email"
+              id="email"
+              className="form-control"
+              placeholder="email@example.com"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
             />
             <button className="btn btn-primary mt-3" type="submit">
               Send Mail

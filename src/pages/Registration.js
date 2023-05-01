@@ -70,7 +70,7 @@ function Registration() {
       })
       .catch((err) => {
         console.log(err.response.data);
-        swal(`${err.response.data}`, "User Already Registered", "error");
+        swal(`${err.response.data}`, "Something went wrong!", "error");
       });
   };
 
