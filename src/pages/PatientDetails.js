@@ -9,6 +9,9 @@ import ProgressChart from "../components/ProgressChart";
 import PatientUsageChart from "../components/PatientUsageChart";
 import { progressData, patUsageData } from "../fakeData";
 
+import { FiRefreshCw } from "react-icons/fi";
+import { MdOutlineDoneOutline } from "react-icons/md";
+
 // import {assignedArticles} from '../fakeData'
 import { useNavigate } from "react-router-dom";
 
@@ -28,6 +31,7 @@ import {
 } from "../assets/URLs";
 import { updateArticleState } from "../reducers/articleReducer";
 import { LoggedInUserContext } from "../context/LoggedInUserContext";
+import swal from "sweetalert";
 
 const PatientDetails = () => {
   const navigate = useNavigate();
@@ -59,7 +63,7 @@ const PatientDetails = () => {
   const [patientUsageData, setPatientUsageData] = useState([]);
   // const [patientProgressData, setPatientProgressData] = useState([]);
   const [month, setMonth] = useState(0);
-  const [year, setYear] = useState(0);
+  const [year, setYear] = useState(2020);
 
   const fetchExpoDeviceToken = async () => {
     console.log("inside expo token fetch func");
@@ -168,8 +172,14 @@ const PatientDetails = () => {
         "ngrok-skip-browser-warning": "69420",
       },
     });
-    const response = await fetch(request);
-    console.log(response);
+    await fetch(request)
+      .then((res) => {
+        console.log(res.data);
+        swal("Deleted", "deleted your item successfully", "success");
+        fetchAssignedContent();
+      })
+      .catch((err) => console.log(err));
+    // console.log(response);
   };
 
   // useEffect(() => {
@@ -312,11 +322,11 @@ const PatientDetails = () => {
         <div className="container-fluid">
           {/* This is patient details page */}
           <div className="row mt-2" style={{ height: "90vh" }}>
-            <div className="col-md-4">
+            <div className="col-md-5">
               <div className="row">
                 {patients
                   .filter((patient) => {
-                    if (patient.id == patientId) {
+                    if (patient.id === patientId) {
                       return patient;
                     }
                   })
@@ -326,20 +336,42 @@ const PatientDetails = () => {
                         border="light"
                         className="my-2 text-center"
                         key={patient.id}
-                      >
+                      ><div className="row">
+                      <div className="col-6">
                         <Card.Header>
-                          <div className="avatar rounded-circle">
+                          
+                          <div className="avatar rounded-circle" >
                             <img
                               alt="image"
                               src={avatar}
-                              style={{ objectFit: "contain", width: "25%" }}
+                              style={{ objectFit: "contain", width: "82%" }}
                             />
                           </div>
                           <div className="">
+                            
+                            {/* <Card.Text>Patient ID: {patient?.id}</Card.Text> */}
+                           
+                            </div>
+                          
+                        </Card.Header>
+                        </div>
+                        <div className="col-6">
+                        <div className="my-2">
+                          <div
+                            style={{ backgroundColor: "#d8d8d9" }}
+                            className="p-2 text-center"
+                          >
                             <Card.Title>
                               {patient?.firstName} {patient?.lastName}
                             </Card.Title>
-                            <Card.Text>Patient ID: {patient?.id}</Card.Text>
+                            {/* <i>Patient Details</i> */}
+                            <Card.Text>
+                              {/* mail: {patient?.email} <br /> */}
+                              gender: {patient?.gender} <br />
+                              {/* address: {patient?.address} <br /> */}
+                              contact: {patient?.contact} <br />
+                              DOB: {patient?.dob.month} {patient?.dob.year}
+                            </Card.Text>
                             <button
                               className="btn btn-secondary"
                               onClick={() => {
@@ -349,21 +381,8 @@ const PatientDetails = () => {
                               Message Patient
                             </button>
                           </div>
-                        </Card.Header>
-                        <div className="my-2">
-                          <div
-                            style={{ backgroundColor: "#d8d8d9" }}
-                            className="p-2 text-center"
-                          >
-                            <i>Patient Details</i>
-                            <Card.Text>
-                              mail: {patient?.email} <br />
-                              gender: {patient?.gender} <br />
-                              address: {patient?.address} <br />
-                              contact: {patient?.contact} <br />
-                              DOB: {patient?.dob.month} {patient?.dob.year}
-                            </Card.Text>
-                          </div>
+                        </div>
+                        </div>
                         </div>
                       </Card>
                     );
@@ -377,11 +396,18 @@ const PatientDetails = () => {
                   <i style={{ fontSize: "large", fontWeight: "bold" }}>
                     Assigned Personalised Articles
                   </i>
+
                   <button
                     className="btn btn-sm btn-secondary"
                     onClick={handleShow}
                   >
                     Add content
+                  </button>
+                  <button
+                    className="btn btn-sm btn-light"
+                    onClick={fetchAssignedContent}
+                  >
+                    <FiRefreshCw />
                   </button>
                 </div>
                 {/* <div className='container-fluid'> */}
@@ -392,10 +418,11 @@ const PatientDetails = () => {
                         className="col-3"
                         style={{ backgroundColor: "#bfbebe" }}
                       >
+                        {article?.completed && <MdOutlineDoneOutline />} &nbsp;
                         {article?.articleType}
                       </div>
                       <div
-                        className="col-3"
+                        className="col-4"
                         style={{ backgroundColor: "#bfbebe" }}
                       >
                         {article?.articleTitle}
@@ -413,7 +440,7 @@ const PatientDetails = () => {
                         </a>
                       </div>
                       <button
-                        className="btn btn-sm btn-danger col-auto"
+                        className="btn btn-sm btn-danger col-2"
                         onClick={() => {
                           deleteAssignedContent(article.id);
                         }}
@@ -426,7 +453,7 @@ const PatientDetails = () => {
                 {/* </div> */}
               </div>
             </div>
-            <div className="chart-details col-md-8">
+            <div className="chart-details col-md-7">
               <div className="col">
                 <div
                   className="row border-light p-2 rounded"
@@ -492,10 +519,10 @@ const PatientDetails = () => {
                     </div>
                     <div className="col-2">
                       <button
-                        className="btn btn-light"
+                        className="btn btn-sm btn-light"
                         onClick={fetchUsageData}
                       >
-                        Refresh
+                        <FiRefreshCw /> Refresh
                       </button>
                     </div>
                   </div>
@@ -505,7 +532,7 @@ const PatientDetails = () => {
                     style={{
                       position: "relative",
                       height: "35vh",
-                      width: "50vw",
+                      width: "45vw",
                     }}
                   >
                     <PatientUsageChart data={usgData} />

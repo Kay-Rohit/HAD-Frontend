@@ -149,20 +149,20 @@ export const severityData = [
 export const progressData = [
   {
     id: 1,
-    weekNumber: "week 1" ,
+    weekNumber: 1 ,
     score: 20
   },
   {
     id: 2,
-    weekNumber: "week 2" ,
+    weekNumber: 2 ,
     score: 67
   },{
     id: 3,
-    weekNumber: "week 3" ,
+    weekNumber: 3 ,
     score: 87
   },{
     id: 4,
-    weekNumber: "week 4" ,
+    weekNumber: 4 ,
     score: 79
   }
 ]
