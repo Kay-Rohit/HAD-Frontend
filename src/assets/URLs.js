@@ -1,5 +1,4 @@
-export const baseURL =
-  "https://0ee4-119-161-98-68.ngrok-free.app";
+export const baseURL = "https://7c2a-119-161-98-68.ngrok-free.app";
 
 export const loginURL = `${baseURL}/login`;
 export const loginURL_v2 = `${baseURL}/login-timestamp`;
@@ -33,5 +32,3 @@ export const questionaireDataURL = `${baseURL}/admin/get/full-week/`;
 export const patientUsageURL = `${baseURL}/analytics/duration/`;
 
 export const patientProgressDataURL = `${baseURL}/analytics/plot-line-chart/`;
-
-

@@ -26,19 +26,20 @@ function LoginComponent() {
 
   const sendPasswordResetMail = async (e) => {
     e.preventDefault();
-    // let config = {
-    //   headers: {
-    //     "ngrok-skip-browser-warning": "true",
-    //   },
-    // };
-    // await axios
-    //   .get(`${baseURL}/forgot-password/${email}`, config)
-    //   .then((res) => {
-    //     console.log(res);
-    //     setEmail("");
-    //     alert("Check your email!");
-    //   })
-    //   .catch((err) => console.log(err));
+    let config = {
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
+    };
+    await axios
+      .get(`${baseURL}/forgot-password/${email}`, config)
+      .then((res) => {
+        console.log(res);
+        setEmail("");
+        alert("Check your email!");
+        handleClose();
+      })
+      .catch((err) => console.log(err));
 
     await fetch(`${baseURL}/forgot-password/${email}`, {
       method: "GET", // *GET, POST, PUT, DELETE, etc.
@@ -225,6 +226,7 @@ function LoginComponent() {
                             </label>
                             <div>
                               <button
+                                type="button"
                                 className="btn btn-light btn-sm text-secondary text-sm"
                                 onClick={handleShow}
                               >

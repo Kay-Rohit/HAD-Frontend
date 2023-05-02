@@ -9,7 +9,7 @@ import { registerDoctorURL } from "../assets/URLs";
 function Registration() {
   const navigate = useNavigate();
 
-  const [enabled, setEnabled] = useState(true);
+  // const [enabled, setEnabled] = useState(false);
 
   //form data
   const [firstname, setFirstname] = useState("");
@@ -25,14 +25,14 @@ function Registration() {
   const [regnum, setRegnum] = useState("");
   const [regStamp, setRegStamp] = useState("");
   const [address, setAddress] = useState("");
-  const [patientLimit, setPatientLimit] = useState("");
+  const [patientLimit, setPatientLimit] = useState(0);
   const patientCount = 0;
   const [exp, setExp] = useState("");
   const [age, setAge] = useState("");
   const [selectedLanguages, setSelectedLanguages] = useState([{}]);
 
-  //enabe or disable button
-  // const enabled = username.length>0 && pwd.length>0;
+  var enabled = email.length > 0 && password.length > 0;
+
   const data = {
     firstName: firstname,
     lastName: lastname,
@@ -61,16 +61,19 @@ function Registration() {
   };
 
   const handleRegistration = async () => {
-    console.log(data);
+    // console.log(data);
+    enabled = false;
     await axios
       .post(`${registerDoctorURL}`, data, config)
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         swal("Registered Successfully", `${res.data}`, "success");
+        navigate("/login");
       })
       .catch((err) => {
         console.log(err.response.data);
         swal(`${err.response.data}`, "Something went wrong!", "error");
+        enabled = true;
       });
   };
 
@@ -102,7 +105,7 @@ function Registration() {
             <div className="card rounded-3 text-black">
               <div className="card-body">
                 <div className="text-center">
-                  <form className="mt-3 py-3">
+                  <form className="mt-3 py-3" onSubmit={handleRegistration}>
                     <h4>Please fill the form to register!</h4>
 
                     <div className="m-3">Personal Details</div>
@@ -148,6 +151,18 @@ function Registration() {
                     </div>
                     <div className="row">
                       <div className="col-12 col-md-4 mb-4">
+                        {/* <select
+                          onChange={(e) => {
+                            setGender(e.target.value);
+                          }}
+                        >
+                          <options>
+                            <option selected value="male">
+                              Male
+                            </option>
+                            <option value="female">Female</option>
+                          </options>
+                        </select> */}
                         <input
                           type="text"
                           id="gender"
@@ -332,10 +347,10 @@ function Registration() {
                     </div>
                     <div className="text-center pt-1 mb-5 pb-1">
                       <button
-                        className="btn btn-dark btn-block fa-lg gradient-custom-2 mb-3"
-                        type="button"
-                        onClick={handleRegistration}
-                        disabled={!enabled}
+                        className="btn btn-dark btn-lg fa-lg gradient-custom-2 mb-3"
+                        type="submit"
+                        // onClick={handleRegistration}
+                        disabled={password === "" && email === ""}
                       >
                         Register
                       </button>

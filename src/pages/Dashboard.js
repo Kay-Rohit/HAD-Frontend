@@ -6,13 +6,19 @@ import { barChartData, severityData } from "../fakeData";
 // import ProgressBar from 'react-bootstrap/ProgressBar'
 import { FiRefreshCw } from "react-icons/fi";
 import Requests from "../components/Requests";
-import { baseURL, requestsURL, severityDataURL, avgUsageURL } from "../assets/URLs";
+import {
+  baseURL,
+  requestsURL,
+  severityDataURL,
+  avgUsageURL,
+} from "../assets/URLs";
 import { useState, useEffect, useContext } from "react";
 import { useDispatch } from "react-redux";
 import { updateRequestState } from "../reducers/requests/requestReducer";
 import { LoggedInUserContext } from "../context/LoggedInUserContext";
 import { BsCheckAll } from "react-icons/bs";
 import { Modal } from "react-bootstrap";
+import swal from "sweetalert";
 
 const Dashboard = ({ token, user }) => {
   const dispatch = useDispatch();
@@ -23,6 +29,7 @@ const Dashboard = ({ token, user }) => {
   const [resetPasswordDetails, setResetPasswordDetails] = useState({
     newPassword: "",
     confirmPassword: "",
+    oldPassword: "",
   });
 
   //for modal ============================
@@ -125,15 +132,16 @@ const Dashboard = ({ token, user }) => {
     ],
   });
 
-  async function fetchUsageTime(){
-      await axios.get(`https://0ee4-119-161-98-68.ngrok-free.app/analytics/allUsage/f8044340-3290-4c44-b2f2-f66f1683838a`,config)
-          .then((response) => {
-              console.log("usage time returned",response.data);
-              setAvgUsageData(response.data);
-          })
-          .catch((error) => {
-              console.log(error);
-          })
+  async function fetchUsageTime() {
+    await axios
+      .get(`${avgUsageURL}${user?.id}`, config)
+      .then((response) => {
+        console.log("usage time returned", response.data);
+        setAvgUsageData(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   const doctor_name = `Dr. ${user?.firstName} ${user?.middleName} ${user?.lastName}`;
@@ -145,7 +153,8 @@ const Dashboard = ({ token, user }) => {
         `${baseURL}/doctor/reset-password`,
         {
           email: user?.email,
-          password: resetPasswordDetails.newPassword,
+          newPassword: resetPasswordDetails.newPassword,
+          oldPassword: resetPasswordDetails.oldPassword,
         },
         {
           headers: {
@@ -157,6 +166,11 @@ const Dashboard = ({ token, user }) => {
       .then((res) => {
         console.log(res.data);
         handleClose();
+        swal(
+          "Success",
+          "successfully updated password -> please login again",
+          "success"
+        );
         setLoggedinUser({ ...loggedinUser, role: null, token: null, user: {} });
       })
       .catch((err) => console.log(err));
@@ -239,7 +253,7 @@ const Dashboard = ({ token, user }) => {
           keyboard={false}
           size="lg"
         >
-          <Modal.Header closeButton>
+          <Modal.Header>
             <Modal.Title>Reset your password!</Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -256,52 +270,83 @@ const Dashboard = ({ token, user }) => {
                 // onChange={(event) => setEmail({...resetPasswordDetails,newPassword:event.target.value})}
                 readOnly
               />
-              <label className="form-label mt-3" htmlFor="email">
-                Enter your new password
-              </label>
-              <input
-                type="password"
-                id="password"
-                className="form-control"
-                placeholder="Enter new password"
-                value={resetPasswordDetails.newPassword}
-                onChange={(event) =>
-                  setResetPasswordDetails({
-                    ...resetPasswordDetails,
-                    newPassword: event.target.value,
-                  })
-                }
-                required
-              />
-              <label className="form-label mt-3" htmlFor="email">
-                Confirm password
-              </label>
-              <div className="d-flex justify-content-between">
-                <label>
-                  {resetPasswordDetails.newPassword ===
-                    resetPasswordDetails.confirmPassword && <BsCheckAll />}
+              <div className="col-lg-6 col-12">
+                <label className="form-label mt-3" htmlFor="old_pass">
+                  Enter your old password
                 </label>
                 <input
-                  type="passowrd"
-                  id="new_password"
+                  type="password"
+                  id="old_pass"
                   className="form-control"
-                  placeholder="Confirm password"
-                  value={resetPasswordDetails.confirmPassword}
+                  placeholder="Enter old password"
+                  value={resetPasswordDetails.oldPassword}
                   onChange={(event) =>
                     setResetPasswordDetails({
                       ...resetPasswordDetails,
-                      confirmPassword: event.target.value,
+                      oldPassword: event.target.value,
                     })
                   }
                   required
                 />
               </div>
+              <div className="row">
+                <div className="col-lg col-12">
+                  <label className="form-label mt-3" htmlFor="email">
+                    Enter your new password
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    className="form-control"
+                    placeholder="Enter new password"
+                    value={resetPasswordDetails.newPassword}
+                    onChange={(event) =>
+                      setResetPasswordDetails({
+                        ...resetPasswordDetails,
+                        newPassword: event.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+                <div className="col-lg col-12">
+                  <label className="form-label mt-3" htmlFor="email">
+                    Confirm password
+                  </label>
+                  <div className="d-flex justify-content-between">
+                    <label>
+                      {resetPasswordDetails.newPassword ===
+                        resetPasswordDetails.confirmPassword &&
+                        resetPasswordDetails.confirmPassword !== "" && (
+                          <BsCheckAll />
+                        )}
+                    </label>
+                    <input
+                      type="passowrd"
+                      id="new_password"
+                      className="form-control"
+                      placeholder="Confirm password"
+                      value={resetPasswordDetails.confirmPassword}
+                      onChange={(event) =>
+                        setResetPasswordDetails({
+                          ...resetPasswordDetails,
+                          confirmPassword: event.target.value,
+                        })
+                      }
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
               <button
                 className="btn btn-primary mt-3"
                 type="submit"
                 disabled={
+                  resetPasswordDetails.confirmPassword === "" ||
+                  resetPasswordDetails.newPassword === "" ||
                   resetPasswordDetails.newPassword !==
-                  resetPasswordDetails.confirmPassword
+                    resetPasswordDetails.confirmPassword
                 }
               >
                 Reset Password
