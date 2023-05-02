@@ -7,7 +7,7 @@ function ProgressChart({ data }) {
     <Line
       data={data}
       options={{
-        plugins: { title: { display: true, text: "Week-wise progress of user" } , legend: {
+        plugins: { title: { display: true, text: "Week-wise severity score of user" } , legend: {
           display: false
       }, tooltips: {
         callbacks: {
@@ -18,7 +18,7 @@ function ProgressChart({ data }) {
     }},
         scales: {
           y: {
-            max: 100,
+            max: 500,
             min: 0,
           },
         },

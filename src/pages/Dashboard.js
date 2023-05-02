@@ -6,7 +6,7 @@ import { barChartData, severityData } from "../fakeData";
 // import ProgressBar from 'react-bootstrap/ProgressBar'
 import { FiRefreshCw } from "react-icons/fi";
 import Requests from "../components/Requests";
-import { baseURL, requestsURL, severityDataURL } from "../assets/URLs";
+import { baseURL, requestsURL, severityDataURL, avgUsageURL } from "../assets/URLs";
 import { useState, useEffect, useContext } from "react";
 import { useDispatch } from "react-redux";
 import { updateRequestState } from "../reducers/requests/requestReducer";
@@ -18,6 +18,7 @@ const Dashboard = ({ token, user }) => {
   const dispatch = useDispatch();
   const { loggedinUser, setLoggedinUser } = useContext(LoggedInUserContext);
   const [patientSeverityData, setPatientSeverityData] = useState([{}]);
+  const [avgUsageData, setAvgUsageData] = useState([{}]);
 
   const [resetPasswordDetails, setResetPasswordDetails] = useState({
     newPassword: "",
@@ -36,6 +37,7 @@ const Dashboard = ({ token, user }) => {
   useEffect(() => {
     fetchRequests();
     fetchSeverityData();
+    fetchUsageTime();
     if (user?.forgotPassword === true) {
       handleShow();
     }
@@ -53,6 +55,19 @@ const Dashboard = ({ token, user }) => {
       ],
     });
   }, [patientSeverityData]);
+
+  useEffect(() => {
+    //function to use data as required by graph
+    setUsageData({
+      labels: avgUsageData.map((data) => data.usageTime),
+      datasets: [
+        {
+          label: "Usage time",
+          data: avgUsageData.map((data) => data.count),
+        },
+      ],
+    });
+  }, [avgUsageData]);
 
   let config = {
     headers: {
@@ -110,20 +125,16 @@ const Dashboard = ({ token, user }) => {
     ],
   });
 
-  // async function fetchUsageTime(){
-  //     await axios.get(`${usageTimesURL}${user.id}`,config)
-  //         .then((response) => {
-  //             console.log("usage time returned",response.data);
-
-  //             //save the requests in redux
-  //             dispatch(
-  //                 updateRequestState(response.data)
-  //             )
-  //         })
-  //         .catch((error) => {
-  //             console.log(error);
-  //         })
-  // }
+  async function fetchUsageTime(){
+      await axios.get(`https://0ee4-119-161-98-68.ngrok-free.app/analytics/allUsage/f8044340-3290-4c44-b2f2-f66f1683838a`,config)
+          .then((response) => {
+              console.log("usage time returned",response.data);
+              setAvgUsageData(response.data);
+          })
+          .catch((error) => {
+              console.log(error);
+          })
+  }
 
   const doctor_name = `Dr. ${user?.firstName} ${user?.middleName} ${user?.lastName}`;
 

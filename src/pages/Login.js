@@ -223,12 +223,14 @@ function LoginComponent() {
                             <label className="form-label" htmlFor="password">
                               Password
                             </label>
-                            <button
-                              className="btn btn-light btn-sm text-secondary text-sm"
-                              onClick={handleShow}
-                            >
-                              Forget Password?
-                            </button>
+                            <div>
+                              <button
+                                className="btn btn-light btn-sm text-secondary text-sm"
+                                onClick={handleShow}
+                              >
+                                Forget Password?
+                              </button>
+                            </div>
                           </div>
 
                           <div className="text-center pt-1 mb-5 pb-1">
@@ -244,7 +246,7 @@ function LoginComponent() {
                         </form>
                         <br />
                         <span className="text-muted">
-                          Donot have an accout?{" "}
+                          Don't have an account?{" "}
                           <button
                             className="btn btn-sm btn-light"
                             type="button"
