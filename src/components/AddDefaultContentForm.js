@@ -1,12 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import SingleQuestionDefaultContentForm from "./SingleQuestionDefaultContentForm";
 import { useSelector } from "react-redux";
+import axios from "axios";
+import { LoggedInUserContext } from "../context/LoggedInUserContext";
+import { baseURL } from "../assets/URLs";
+import swal from "sweetalert";
 
-function AddDefaultContentForm({weekNo, sessionNo}) {
+function AddDefaultContentForm({weekNo, sessionNo, handleClose}) {
   const questions = useSelector((state) => state.questions.value);
-//   console.log("redux state", questions, weekNo, sessionNo)
+  const { loggedinUser, setLoggedinUser } = useContext(LoggedInUserContext)
+  // console.log("redux state", questions);
 
-  const dataToBeSent = {...questions, weekNumber:weekNo, sessionNumber: sessionNo}
+  const updateSessionQuestionaire = async() => {
+    console.log("Inside update questionaire", typeof(sessionNo), typeof(weekNo));
+    await axios.post(`${baseURL}/admin/update/questions/${weekNo}/${sessionNo}`, questions, {
+      headers:{
+        Authorization: loggedinUser?.token,
+        "ngrok-skip-browser-warning":"true"
+      }
+    })
+    .then((res) => {
+      console.log(res.data);
+      swal("Added","Questionaire Updated Successfully", "success");
+      handleClose();
+    })
+    .catch(err => console.log(err));
+  }
 
   return (
     <div className="col-12 justify-center">
@@ -19,7 +38,8 @@ function AddDefaultContentForm({weekNo, sessionNo}) {
           );
         })}
         <button className="btn btn-primary mt-5 " onClick={() => {
-            console.log(dataToBeSent)
+          console.log("Updated list", questions);
+          updateSessionQuestionaire();
         }}>
             SAVE TO THE DATABASE
         </button>

@@ -5,7 +5,7 @@ import axios from "axios";
 import { LoggedInUserContext } from "../../context/LoggedInUserContext";
 import AddDefaultContentForm from "../../components/AddDefaultContentForm";
 import { Modal, Button } from "react-bootstrap";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateQuestion } from "../../reducers/defaultContentReducer";
 
 function AddContent() {
@@ -13,14 +13,16 @@ function AddContent() {
   const dispatch = useDispatch();
   //see week 1 questionaire
   const [weekNo, setWeekNo] = useState(1);
-  const [sessionNo, setSessionNo] = useState(0);
+  const [sessionNo, setSessionNo] = useState(1);
   const [questionaire, setQuestionaire] = useState([{}]);
   const { loggedinUser, setLoggedinUser } = useContext(LoggedInUserContext);
   const token = loggedinUser.token;
 
   //for modal ============================
   const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false)
+  };
   const handleShow = () => {
     setShow(true);
     //change redux store value with questions in session selected
@@ -46,11 +48,11 @@ function AddContent() {
   ];
 
   const sessionOptions = [
-    { value: 0, label: "Session 1" },
-    { value: 1, label: "Session 2" },
-    { value: 2, label: "Session 3" },
-    { value: 3, label: "Session 4" },
-    { value: 4, label: "Session 5" },
+    { value: 1, label: "Session 1" },
+    { value: 2, label: "Session 2" },
+    { value: 3, label: "Session 3" },
+    { value: 4, label: "Session 4" },
+    { value: 5, label: "Session 5" },
   ];
 
 
@@ -58,7 +60,7 @@ function AddContent() {
     await axios
       .get(`${questionaireDataURL}${weekNo}`, config)
       .then((res) => {
-        // console.log("api call", res.data);
+        console.log("api call", res.data);
         setData(res.data);
       })
       .catch((err) => console.log(err));
@@ -67,6 +69,12 @@ function AddContent() {
   useEffect(() => {
     getQuestionaireData();
   }, [weekNo]);
+
+  useEffect(() => {
+    console.log(sessionNo);
+    var ind = sessionNo - 1;
+    setQuestionaire(data[ind]?.sessionQuestions);
+  }, [sessionNo])
 
   return (
     <div>
@@ -81,7 +89,7 @@ function AddContent() {
           <Modal.Title>Update Questionaire</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <AddDefaultContentForm weekNo={weekNo} sessionNo={1+parseInt(sessionNo)}/>
+          <AddDefaultContentForm weekNo={weekNo} sessionNo={sessionNo} handleClose={handleClose}/>
         </Modal.Body>
       </Modal>
 
@@ -93,7 +101,7 @@ function AddContent() {
           <select
             className="form-select"
             onChange={(e) => {
-              setWeekNo(e.target.value);
+              setWeekNo(parseInt(e.target.value));
             }}
           >
             {weekOptions.map((op) => {
@@ -109,9 +117,7 @@ function AddContent() {
           <select
             className="form-select"
             onChange={(e) => {
-              setSessionNo(e.target.value);
-              //   console.log(data[sessionNo]?.sessionQuestions);
-              setQuestionaire(data[sessionNo]?.sessionQuestions);
+              setSessionNo(parseInt(e.target.value));
             }}
           >
             {sessionOptions.map((op) => {
