@@ -19,8 +19,9 @@ const Profile = () => {
   const [resetPasswordDetails, setResetPasswordDetails] = useState({
     newPassword: "",
     confirmPassword: "",
+    oldPassword: "",
   });
-  
+
   const [updateUserDetails, setUpdateUserDetails] = useState({
     doctorID: user?.id,
     address: user?.address,
@@ -54,7 +55,8 @@ const Profile = () => {
         `${baseURL}/doctor/reset-password`,
         {
           email: user?.email,
-          password: resetPasswordDetails.newPassword,
+          newPassword: resetPasswordDetails.newPassword,
+          oldPassword: resetPasswordDetails.oldPassword,
         },
         config
       )
@@ -71,23 +73,14 @@ const Profile = () => {
       .catch((err) => console.log(err));
   };
 
-
-  const updateDoctorDetails = async(e) => {
+  const updateDoctorDetails = async (e) => {
     e.preventDefault();
     await axios
-      .post(
-        `${baseURL}/doctor/update/profile`,
-        updateUserDetails,
-        config
-      )
+      .post(`${baseURL}/doctor/update/profile`, updateUserDetails, config)
       .then((res) => {
         console.log(res.data);
         handleCloseResetPass();
-        swal(
-          "Success",
-          "Updated Details Successfully",
-          "success"
-        );
+        swal("Success", "Updated Details Successfully", "success");
       })
       .catch((err) => console.log(err));
   };
@@ -295,19 +288,37 @@ const Profile = () => {
               type="text"
               id="email"
               className="form-control"
-              // placeholder="Enter new password"
               value={user?.email}
               // onChange={(event) => setEmail({...resetPasswordDetails,newPassword:event.target.value})}
               readOnly
             />
+            <div className="col-lg-6 col-12">
+              <label className="form-label mt-3" htmlFor="current_password">
+                Enter your current password
+              </label>
+              <input
+                type="password"
+                id="current_password"
+                className="form-control"
+                placeholder="Enter current password"
+                value={resetPasswordDetails.oldPassword}
+                onChange={(event) =>
+                  setResetPasswordDetails({
+                    ...resetPasswordDetails,
+                    oldPassword: event.target.value,
+                  })
+                }
+                required
+              />
+            </div>
             <div className="row">
               <div className="col-lg col-12">
-                <label className="form-label mt-3" htmlFor="email">
+                <label className="form-label mt-3" htmlFor="new_password">
                   Enter your new password
                 </label>
                 <input
                   type="password"
-                  id="password"
+                  id="new_password"
                   className="form-control"
                   placeholder="Enter new password"
                   value={resetPasswordDetails.newPassword}
@@ -319,9 +330,15 @@ const Profile = () => {
                   }
                   required
                 />
+                {resetPasswordDetails.oldPassword ===
+                  resetPasswordDetails.newPassword && (
+                  <label className="form-label my-3 text-danger" htmlFor="">
+                    *new password cannot be same as your current password*
+                  </label>
+                )}
               </div>
               <div className="col-lg col-12">
-                <label className="form-label mt-3" htmlFor="email">
+                <label className="form-label mt-3" htmlFor="confirm_password">
                   Confirm password
                 </label>
                 <div className="d-flex justify-content-between">
@@ -334,7 +351,7 @@ const Profile = () => {
                   </label>
                   <input
                     type="passowrd"
-                    id="new_password"
+                    id="confirm_password"
                     className="form-control"
                     placeholder="Confirm password"
                     value={resetPasswordDetails.confirmPassword}
@@ -357,7 +374,8 @@ const Profile = () => {
                 resetPasswordDetails.confirmPassword === "" ||
                 resetPasswordDetails.newPassword === "" ||
                 resetPasswordDetails.newPassword !==
-                  resetPasswordDetails.confirmPassword
+                  resetPasswordDetails.confirmPassword ||
+                resetPasswordDetails.oldPassword === resetPasswordDetails.newPassword
               }
             >
               Reset Password
@@ -378,7 +396,7 @@ const Profile = () => {
           <Modal.Title>Update your profile</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <form onSubmit={() => {}}>
+          <form onSubmit={updateDoctorDetails}>
             <div className="row">
               <div className="col-lg col-12">
                 <label className="form-label mt-3" htmlFor="contact">
@@ -418,9 +436,9 @@ const Profile = () => {
               </div>
             </div>
             <div className="col-12">
-            <label className="form-label mt-3" htmlFor="address">
-                  Update Address
-                </label>
+              <label className="form-label mt-3" htmlFor="address">
+                Update Address
+              </label>
               <textarea
                 type="text"
                 id="address"
@@ -437,7 +455,7 @@ const Profile = () => {
               />
             </div>
             <div className="row">
-                <div className="col-lg col-12">
+              <div className="col-lg col-12">
                 <label className="form-label mt-3" htmlFor="degree">
                   Update Degree
                 </label>
@@ -454,8 +472,8 @@ const Profile = () => {
                   }
                   required
                 />
-                </div>
-                <div className="col-lg col-12">
+              </div>
+              <div className="col-lg col-12">
                 <label className="form-label mt-3" htmlFor="specialisation">
                   Update your Specialisation
                 </label>
@@ -472,17 +490,17 @@ const Profile = () => {
                   }
                   required
                 />
-                </div>
+              </div>
             </div>
             <button
               className="btn btn-primary mt-3"
               type="submit"
               disabled={
-                updateUserDetails.address==="" ||
-                updateUserDetails.contact==="" ||
-                updateUserDetails.degree==="" ||
-                updateUserDetails.patientLimit==="" ||
-                updateUserDetails.specialization===""
+                updateUserDetails.address === "" ||
+                updateUserDetails.contact === "" ||
+                updateUserDetails.degree === "" ||
+                updateUserDetails.patientLimit === "" ||
+                updateUserDetails.specialization === ""
               }
             >
               Update Details
