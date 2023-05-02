@@ -228,7 +228,7 @@ const Dashboard = ({ token, user }) => {
           keyboard={false}
           size="lg"
         >
-          <Modal.Header closeButton>
+          <Modal.Header>
             <Modal.Title>Reset your password!</Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -245,52 +245,64 @@ const Dashboard = ({ token, user }) => {
                 // onChange={(event) => setEmail({...resetPasswordDetails,newPassword:event.target.value})}
                 readOnly
               />
-              <label className="form-label mt-3" htmlFor="email">
-                Enter your new password
-              </label>
-              <input
-                type="password"
-                id="password"
-                className="form-control"
-                placeholder="Enter new password"
-                value={resetPasswordDetails.newPassword}
-                onChange={(event) =>
-                  setResetPasswordDetails({
-                    ...resetPasswordDetails,
-                    newPassword: event.target.value,
-                  })
-                }
-                required
-              />
-              <label className="form-label mt-3" htmlFor="email">
-                Confirm password
-              </label>
-              <div className="d-flex justify-content-between">
-                <label>
-                  {resetPasswordDetails.newPassword ===
-                    resetPasswordDetails.confirmPassword && <BsCheckAll />}
-                </label>
-                <input
-                  type="passowrd"
-                  id="new_password"
-                  className="form-control"
-                  placeholder="Confirm password"
-                  value={resetPasswordDetails.confirmPassword}
-                  onChange={(event) =>
-                    setResetPasswordDetails({
-                      ...resetPasswordDetails,
-                      confirmPassword: event.target.value,
-                    })
-                  }
-                  required
-                />
+              <div className="row">
+                <div className="col-lg col-12">
+                  <label className="form-label mt-3" htmlFor="email">
+                    Enter your new password
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    className="form-control"
+                    placeholder="Enter new password"
+                    value={resetPasswordDetails.newPassword}
+                    onChange={(event) =>
+                      setResetPasswordDetails({
+                        ...resetPasswordDetails,
+                        newPassword: event.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+                <div className="col-lg col-12">
+                  <label className="form-label mt-3" htmlFor="email">
+                    Confirm password
+                  </label>
+                  <div className="d-flex justify-content-between">
+                    <label>
+                      {resetPasswordDetails.newPassword ===
+                        resetPasswordDetails.confirmPassword &&
+                        resetPasswordDetails.confirmPassword !== "" && (
+                          <BsCheckAll />
+                        )}
+                    </label>
+                    <input
+                      type="passowrd"
+                      id="new_password"
+                      className="form-control"
+                      placeholder="Confirm password"
+                      value={resetPasswordDetails.confirmPassword}
+                      onChange={(event) =>
+                        setResetPasswordDetails({
+                          ...resetPasswordDetails,
+                          confirmPassword: event.target.value,
+                        })
+                      }
+                      required
+                    />
+                  </div>
+                </div>
               </div>
+
               <button
                 className="btn btn-primary mt-3"
                 type="submit"
                 disabled={
+                  resetPasswordDetails.confirmPassword === "" ||
+                  resetPasswordDetails.newPassword === "" ||
                   resetPasswordDetails.newPassword !==
-                  resetPasswordDetails.confirmPassword
+                    resetPasswordDetails.confirmPassword
                 }
               >
                 Reset Password
