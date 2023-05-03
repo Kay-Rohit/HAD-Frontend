@@ -6,22 +6,30 @@ import { barChartData, severityData } from "../fakeData";
 // import ProgressBar from 'react-bootstrap/ProgressBar'
 import { FiRefreshCw } from "react-icons/fi";
 import Requests from "../components/Requests";
-import { baseURL, requestsURL, severityDataURL } from "../assets/URLs";
+import {
+  baseURL,
+  requestsURL,
+  severityDataURL,
+  avgUsageURL,
+} from "../assets/URLs";
 import { useState, useEffect, useContext } from "react";
 import { useDispatch } from "react-redux";
 import { updateRequestState } from "../reducers/requests/requestReducer";
 import { LoggedInUserContext } from "../context/LoggedInUserContext";
 import { BsCheckAll } from "react-icons/bs";
 import { Modal } from "react-bootstrap";
+import swal from "sweetalert";
 
 const Dashboard = ({ token, user }) => {
   const dispatch = useDispatch();
   const { loggedinUser, setLoggedinUser } = useContext(LoggedInUserContext);
   const [patientSeverityData, setPatientSeverityData] = useState([{}]);
+  const [avgUsageData, setAvgUsageData] = useState([{}]);
 
   const [resetPasswordDetails, setResetPasswordDetails] = useState({
     newPassword: "",
     confirmPassword: "",
+    oldPassword: "",
   });
 
   //for modal ============================
@@ -36,6 +44,7 @@ const Dashboard = ({ token, user }) => {
   useEffect(() => {
     fetchRequests();
     fetchSeverityData();
+    fetchUsageTime();
     if (user?.forgotPassword === true) {
       handleShow();
     }
@@ -53,6 +62,19 @@ const Dashboard = ({ token, user }) => {
       ],
     });
   }, [patientSeverityData]);
+
+  useEffect(() => {
+    //function to use data as required by graph
+    setUsageData({
+      labels: avgUsageData.map((data) => data.usageTime),
+      datasets: [
+        {
+          label: "Usage time",
+          data: avgUsageData.map((data) => data.count),
+        },
+      ],
+    });
+  }, [avgUsageData]);
 
   let config = {
     headers: {
@@ -110,20 +132,17 @@ const Dashboard = ({ token, user }) => {
     ],
   });
 
-  // async function fetchUsageTime(){
-  //     await axios.get(`${usageTimesURL}${user.id}`,config)
-  //         .then((response) => {
-  //             console.log("usage time returned",response.data);
-
-  //             //save the requests in redux
-  //             dispatch(
-  //                 updateRequestState(response.data)
-  //             )
-  //         })
-  //         .catch((error) => {
-  //             console.log(error);
-  //         })
-  // }
+  async function fetchUsageTime() {
+    await axios
+      .get(`${avgUsageURL}${user?.id}`, config)
+      .then((response) => {
+        console.log("usage time returned", response.data);
+        setAvgUsageData(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   const doctor_name = `Dr. ${user?.firstName} ${user?.middleName} ${user?.lastName}`;
 
@@ -134,7 +153,8 @@ const Dashboard = ({ token, user }) => {
         `${baseURL}/doctor/reset-password`,
         {
           email: user?.email,
-          password: resetPasswordDetails.newPassword,
+          newPassword: resetPasswordDetails.newPassword,
+          oldPassword: resetPasswordDetails.oldPassword,
         },
         {
           headers: {
@@ -146,6 +166,11 @@ const Dashboard = ({ token, user }) => {
       .then((res) => {
         console.log(res.data);
         handleClose();
+        swal(
+          "Success",
+          "successfully updated password -> please login again",
+          "success"
+        );
         setLoggedinUser({ ...loggedinUser, role: null, token: null, user: {} });
       })
       .catch((err) => console.log(err));
@@ -245,6 +270,25 @@ const Dashboard = ({ token, user }) => {
                 // onChange={(event) => setEmail({...resetPasswordDetails,newPassword:event.target.value})}
                 readOnly
               />
+              <div className="col-lg-6 col-12">
+                <label className="form-label mt-3" htmlFor="old_pass">
+                  Enter your old password
+                </label>
+                <input
+                  type="password"
+                  id="old_pass"
+                  className="form-control"
+                  placeholder="Enter old password"
+                  value={resetPasswordDetails.oldPassword}
+                  onChange={(event) =>
+                    setResetPasswordDetails({
+                      ...resetPasswordDetails,
+                      oldPassword: event.target.value,
+                    })
+                  }
+                  required
+                />
+              </div>
               <div className="row">
                 <div className="col-lg col-12">
                   <label className="form-label mt-3" htmlFor="email">

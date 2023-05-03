@@ -61,7 +61,7 @@ const PatientDetails = () => {
   // console.log(patientId);
   const doctor_name = `${user?.firstName} ${user?.middleName} ${user?.lastName}`;
   const [patientUsageData, setPatientUsageData] = useState([]);
-  // const [patientProgressData, setPatientProgressData] = useState([]);
+  const [patientProgressData, setPatientProgressData] = useState([{}]);
   const [month, setMonth] = useState(0);
   const [year, setYear] = useState(2020);
 
@@ -160,6 +160,7 @@ const PatientDetails = () => {
     fetchAssignedContent();
     fetchExpoDeviceToken();
     fetchUsageData();
+    fetchProgressData();
   }, []);
 
   const deleteAssignedContent = async (articleId) => {
@@ -182,18 +183,18 @@ const PatientDetails = () => {
     // console.log(response);
   };
 
-  // useEffect(() => {
-  //   //function to use data as required by graph
-  //   setPrgrsData({
-  //     labels: patientProgressData.map((data) => data.weekNumber),
-  //     datasets: [
-  //       {
-  //         label: "Progress",
-  //         data: patientProgressData.map((data) => data.score),
-  //       },
-  //     ],
-  //   });
-  // }, [patientProgressData]);
+  useEffect(() => {
+    //function to use data as required by graph
+    setPrgrsData({
+      labels: patientProgressData.map((data) => data.weekNumber),
+      datasets: [
+        {
+          label: "Progress",
+          data: patientProgressData.map((data) => data.score),
+        },
+      ],
+    });
+  }, [patientProgressData]);
 
   useEffect(() => {
     //function to use data as required by graph
@@ -210,18 +211,18 @@ const PatientDetails = () => {
     });
   }, [patientUsageData]);
 
-  // async function fetchProgressData() {
-  //   await axios
-  //     .get(`${patientProgressDataURL}${patientId}/week/${week}`, config)
-  //     .then((response) => {
-  //         console.log("progress data", response.data);
-  //       setPatientProgressData(response.data);
-  //       //save the requests in redux
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // }
+  async function fetchProgressData() {
+    await axios
+      .get(`${patientProgressDataURL}${patientId}`, config)
+      .then((response) => {
+          console.log("progress data", response.data);
+        setPatientProgressData(response.data);
+        //save the requests in redux
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   async function fetchUsageData() {
     console.log("month = ", month, "and year =", year);

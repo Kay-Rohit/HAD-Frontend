@@ -7,15 +7,19 @@ function ProgressChart({ data }) {
     <Line
       data={data}
       options={{
-        plugins: { title: { display: true, text: "Week-wise progress of user" } , legend: {
-          display: false
-      }, tooltips: {
-        callbacks: {
-           label: function(tooltipItem) {
-                  return tooltipItem.yLabel;
-           }
-        }
-    }},
+        plugins: {
+          title: { display: true, text: "Week-wise severity score of user" },
+          legend: {
+            display: false,
+          },
+          tooltips: {
+            callbacks: {
+              label: function (tooltipItem) {
+                return tooltipItem.yLabel;
+              },
+            },
+          },
+        },
         scales: {
           y: {
             max: 100,

@@ -20,9 +20,11 @@ import {
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../../config/FirebaseConfig";
 import { LoggedInUserContext } from "../../context/LoggedInUserContext";
+import swal from "sweetalert";
 
 function VerifyDoctors() {
   const [doctor, setDoctor] = useState({});
+  const [demographics, setDemographics] = useState({});
   const { loggedinUser, setLoggedinUser } = useContext(LoggedInUserContext);
   const unverifiedDoctors = useSelector((state) => state.doctors.value);
   const dispatch = useDispatch();
@@ -37,6 +39,7 @@ function VerifyDoctors() {
 
   useEffect(() => {
     getUnverifiedDoctors();
+    getDemographics();
   }, []);
 
   const getUnverifiedDoctors = async () => {
@@ -50,6 +53,21 @@ function VerifyDoctors() {
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  const getDemographics = async () => {
+    await axios
+      .get(`${baseURL}/analytics/demographics`, {
+        headers: {
+          Authorization: token,
+          "ngrok-skip-browser-warning": "true",
+        },
+      })
+      .then((res) => {
+        console.log("demographics", res.data);
+        setDemographics(res.data);
+      })
+      .catch((err) => console.log(err));
   };
 
   const verifyDoctor = async (id) => {
@@ -66,6 +84,11 @@ function VerifyDoctors() {
         console.log(response.data);
         createChatsDB(id);
         dispatch(deleteDoctor({ id: doctor?.id }));
+        swal(
+          "Verified The doctor",
+          `verified doctor ${doctor?.firstName} ${doctor?.lastName} successfully`,
+          "success"
+        );
       })
       .catch((err) => {
         console.log(err);
@@ -77,9 +100,9 @@ function VerifyDoctors() {
     // only initialize when doctor is verified
     console.log(id);
     await setDoc(doc(db, `doc-${id}`, "dummy patient"), {
-      email:"dummymail@mail.com",
-      name:"dummyname",
-      uid:"123456788765432345678"
+      email: "dummymail@mail.com",
+      name: "dummyname",
+      uid: "123456788765432345678",
     });
     await setDoc(doc(db, "userChats", `${id}`), {});
   };
@@ -88,6 +111,34 @@ function VerifyDoctors() {
     <>
       <div className="sticky-top">
         <AdminComponent />
+      </div>
+      <div className="row col-lg-10 offset-lg-1">
+        <div className="card col m-2" style={{ backgroundColor: "#bfbebe" }}>
+          <h5 className="card-header">
+            Number of patients assigned to a doctor
+          </h5>
+          <div className="card-body">
+            <h5 className="card-title">{demographics?.assignedPatients}</h5>
+          </div>
+        </div>
+        <div className="card col m-2" style={{ backgroundColor: "#bfbebe" }}>
+          <h5 className="card-header">Patients not given a doctor</h5>
+          <div className="card-body">
+            <h5 className="card-title">{demographics?.notAssignedPatients}</h5>
+          </div>
+        </div>
+        <div className="card col m-2" style={{ backgroundColor: "#bfbebe" }}>
+          <h5 className="card-header">Number of Verified Doctors</h5>
+          <div className="card-body">
+            <h5 className="card-title">{demographics?.verifiedDoctors}</h5>
+          </div>
+        </div>
+        <div className="card col m-2" style={{ backgroundColor: "#bfbebe" }}>
+          <h5 className="card-header">Noumber of Unverified Doctors</h5>
+          <div className="card-body">
+            <h5 className="card-title">{demographics?.unverifiedDoctors}</h5>
+          </div>
+        </div>
       </div>
       <div className="container-fluid">
         <div className="col-sm-10 offset-sm-1">
@@ -147,11 +198,9 @@ function VerifyDoctors() {
                         </div>
                         <div className="col-md-4 col-sm-6 col-12 mt-2">
                           <b>Languages Spoken: </b>
-                          {
-                            doctor?.languages.map((lan, i) => {
-                              <span key={i}>{`${lan},`}</span>
-                            })
-                          }
+                          {doctor?.languages.map((lan, i) => {
+                            <span key={i}>{`${lan},`}</span>;
+                          })}
                         </div>
                         <div className="col-md-4 col-sm-6 col-12 mt-2">
                           <b>Address: </b>

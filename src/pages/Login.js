@@ -26,19 +26,20 @@ function LoginComponent() {
 
   const sendPasswordResetMail = async (e) => {
     e.preventDefault();
-    // let config = {
-    //   headers: {
-    //     "ngrok-skip-browser-warning": "true",
-    //   },
-    // };
-    // await axios
-    //   .get(`${baseURL}/forgot-password/${email}`, config)
-    //   .then((res) => {
-    //     console.log(res);
-    //     setEmail("");
-    //     alert("Check your email!");
-    //   })
-    //   .catch((err) => console.log(err));
+    let config = {
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
+    };
+    await axios
+      .get(`${baseURL}/forgot-password/${email}`, config)
+      .then((res) => {
+        console.log(res);
+        setEmail("");
+        alert("Check your email!");
+        handleClose();
+      })
+      .catch((err) => console.log(err));
 
     await fetch(`${baseURL}/forgot-password/${email}`, {
       method: "GET", // *GET, POST, PUT, DELETE, etc.
@@ -223,12 +224,15 @@ function LoginComponent() {
                             <label className="form-label" htmlFor="password">
                               Password
                             </label>
-                            <button
-                              className="btn btn-light btn-sm text-secondary text-sm"
-                              onClick={handleShow}
-                            >
-                              Forget Password?
-                            </button>
+                            <div>
+                              <button
+                                type="button"
+                                className="btn btn-light btn-sm text-secondary text-sm"
+                                onClick={handleShow}
+                              >
+                                Forget Password?
+                              </button>
+                            </div>
                           </div>
 
                           <div className="text-center pt-1 mb-5 pb-1">
@@ -244,7 +248,7 @@ function LoginComponent() {
                         </form>
                         <br />
                         <span className="text-muted">
-                          Donot have an accout?{" "}
+                          Don't have an account?{" "}
                           <button
                             className="btn btn-sm btn-light"
                             type="button"
