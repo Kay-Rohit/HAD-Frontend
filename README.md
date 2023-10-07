@@ -1,15 +1,9 @@
-<<<<<<< HEAD
-## CHAT INTEGRATED
+The demo videos of the app and wesite can be found here:
+[Demo](https://drive.google.com/file/d/1KR-yPm7gzJc0lPXHENDngDgXqGzlzG8q/view?usp=drivesdk).
 
 # NOTE - Please change the ngrok url in assets/URLs.js
-=======
-#CHAT INTEGRATED
-
->>>>>>> 7dc74be (Update README.md)
 
 # Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
 
